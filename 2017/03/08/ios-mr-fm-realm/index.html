@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Benson, dengyongbo" />
+  <meta name="keywords" content="iOS MagicalRecord FMDB Realm," />
 
 
 
@@ -93,26 +93,27 @@
 
 
 
-<meta name="description" content="iOS持久化有很多种方式，对于大量的数据持久化必然要使用DBMS技术，当前移动平台可选DBMS技术并不多，本文将对当前流行三个的数据库进行分析评估。主要是侧重于在iOS平台上不同方式（多字段和少字段（用json字符串方式合并））性能方面的表现。文中所涉及的数据是基于以下的环境生成。project：demo project设备：iPhone 5siOS系统：10.2    ##介绍 ###Magic">
+<meta name="description" content="iOS持久化有很多种方式，对于大量的数据持久化必然要使用DBMS技术，当前移动平台可选DBMS技术并不多，本文将对当前流行三个的数据库进行分析评估。主要是侧重于在iOS平台上不同方式（多字段和少字段（用json字符串方式合并））性能方面的表现。文中所涉及的数据是基于以下的环境生成。设备：iPhone 5siOS系统：10.2    ##介绍 ###MagicalRecordMagical Reco">
+<meta name="keywords" content="iOS MagicalRecord FMDB Realm">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Benson&#39;s Blog">
-<meta property="og:url" content="http://dengyongbo.info/2017/07/24/ios-mr-fm-realm/index.html">
+<meta property="og:title" content="iOS数据库框架MagicalRecord、FMDB、Realm 比较">
+<meta property="og:url" content="http://dengyongbo.info/2017/03/08/ios-mr-fm-realm/index.html">
 <meta property="og:site_name" content="Benson&#39;s Blog">
-<meta property="og:description" content="iOS持久化有很多种方式，对于大量的数据持久化必然要使用DBMS技术，当前移动平台可选DBMS技术并不多，本文将对当前流行三个的数据库进行分析评估。主要是侧重于在iOS平台上不同方式（多字段和少字段（用json字符串方式合并））性能方面的表现。文中所涉及的数据是基于以下的环境生成。project：demo project设备：iPhone 5siOS系统：10.2    ##介绍 ###Magic">
+<meta property="og:description" content="iOS持久化有很多种方式，对于大量的数据持久化必然要使用DBMS技术，当前移动平台可选DBMS技术并不多，本文将对当前流行三个的数据库进行分析评估。主要是侧重于在iOS平台上不同方式（多字段和少字段（用json字符串方式合并））性能方面的表现。文中所涉及的数据是基于以下的环境生成。设备：iPhone 5siOS系统：10.2    ##介绍 ###MagicalRecordMagical Reco">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://dengyongbo.info/2017/07/24/ios-mr-fm-realm/1.png">
-<meta property="og:image" content="http://dengyongbo.info/2017/07/24/ios-mr-fm-realm/2.png">
-<meta property="og:image" content="http://dengyongbo.info/2017/07/24/ios-mr-fm-realm/3.png">
-<meta property="og:image" content="http://dengyongbo.info/2017/07/24/ios-mr-fm-realm/4.png">
-<meta property="og:image" content="http://dengyongbo.info/2017/07/24/ios-mr-fm-realm/5.png">
-<meta property="og:image" content="http://dengyongbo.info/2017/07/24/ios-mr-fm-realm/6.png">
-<meta property="og:image" content="http://dengyongbo.info/2017/07/24/ios-mr-fm-realm/7.png">
-<meta property="og:image" content="http://dengyongbo.info/2017/07/24/ios-mr-fm-realm/8.png">
-<meta property="og:updated_time" content="2017-07-24T10:54:47.000Z">
+<meta property="og:image" content="http://dengyongbo.info/2017/03/08/ios-mr-fm-realm/1.png">
+<meta property="og:image" content="http://dengyongbo.info/2017/03/08/ios-mr-fm-realm/2.png">
+<meta property="og:image" content="http://dengyongbo.info/2017/03/08/ios-mr-fm-realm/3.png">
+<meta property="og:image" content="http://dengyongbo.info/2017/03/08/ios-mr-fm-realm/4.png">
+<meta property="og:image" content="http://dengyongbo.info/2017/03/08/ios-mr-fm-realm/5.png">
+<meta property="og:image" content="http://dengyongbo.info/2017/03/08/ios-mr-fm-realm/6.png">
+<meta property="og:image" content="http://dengyongbo.info/2017/03/08/ios-mr-fm-realm/7.png">
+<meta property="og:image" content="http://dengyongbo.info/2017/03/08/ios-mr-fm-realm/8.png">
+<meta property="og:updated_time" content="2017-07-24T10:57:47.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Benson&#39;s Blog">
-<meta name="twitter:description" content="iOS持久化有很多种方式，对于大量的数据持久化必然要使用DBMS技术，当前移动平台可选DBMS技术并不多，本文将对当前流行三个的数据库进行分析评估。主要是侧重于在iOS平台上不同方式（多字段和少字段（用json字符串方式合并））性能方面的表现。文中所涉及的数据是基于以下的环境生成。project：demo project设备：iPhone 5siOS系统：10.2    ##介绍 ###Magic">
-<meta name="twitter:image" content="http://dengyongbo.info/2017/07/24/ios-mr-fm-realm/1.png">
+<meta name="twitter:title" content="iOS数据库框架MagicalRecord、FMDB、Realm 比较">
+<meta name="twitter:description" content="iOS持久化有很多种方式，对于大量的数据持久化必然要使用DBMS技术，当前移动平台可选DBMS技术并不多，本文将对当前流行三个的数据库进行分析评估。主要是侧重于在iOS平台上不同方式（多字段和少字段（用json字符串方式合并））性能方面的表现。文中所涉及的数据是基于以下的环境生成。设备：iPhone 5siOS系统：10.2    ##介绍 ###MagicalRecordMagical Reco">
+<meta name="twitter:image" content="http://dengyongbo.info/2017/03/08/ios-mr-fm-realm/1.png">
 
 
 
@@ -140,13 +141,13 @@
 
 
 
-  <link rel="canonical" href="http://dengyongbo.info/2017/07/24/ios-mr-fm-realm/"/>
+  <link rel="canonical" href="http://dengyongbo.info/2017/03/08/ios-mr-fm-realm/"/>
 
 
 
 
 
-  <title> | Benson's Blog</title>
+  <title>iOS数据库框架MagicalRecord、FMDB、Realm 比较 | Benson's Blog</title>
   
 
 
@@ -265,7 +266,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://dengyongbo.info/2017/07/24/ios-mr-fm-realm/">
+    <link itemprop="mainEntityOfPage" href="http://dengyongbo.info/2017/03/08/ios-mr-fm-realm/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Benson Deng">
@@ -282,7 +283,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline"></h1>
+          <h1 class="post-title" itemprop="name headline">iOS数据库框架MagicalRecord、FMDB、Realm 比较</h1>
         
 
         <div class="post-meta">
@@ -294,8 +295,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-24T18:50:15+08:00">
-                2017-07-24
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-08T21:58:43+08:00">
+                2017-03-08
               </time>
             
 
@@ -329,15 +330,15 @@
       
 
       
-        <p>iOS持久化有很多种方式，对于大量的数据持久化必然要使用DBMS技术，当前移动平台可选DBMS技术并不多，本文将对当前流行三个的数据库进行分析评估。主要是侧重于在iOS平台上不同方式（多字段和少字段（用json字符串方式合并））性能方面的表现。文中所涉及的数据是基于以下的环境生成。<br>project：demo project<br>设备：iPhone 5s<br>iOS系统：10.2   </p>
+        <p>iOS持久化有很多种方式，对于大量的数据持久化必然要使用DBMS技术，当前移动平台可选DBMS技术并不多，本文将对当前流行三个的数据库进行分析评估。主要是侧重于在iOS平台上不同方式（多字段和少字段（用json字符串方式合并））性能方面的表现。文中所涉及的数据是基于以下的环境生成。<br>设备：iPhone 5s<br>iOS系统：10.2   </p>
 <p>##介绍</p>
 <p>###MagicalRecord<br>Magical Record是用来操作Core Data的一个第三方工具，而Core Data则是iOS的内置框架，一个模型层的技术. Core Data 本身既不是数据库也不是数据库访问框架.相反,Core Data是一个完整的数据模型解决方案。可以理解为对持久层的封装，使得我们可以通过可视化建立数据模型,简化数据存取. Core Data不是一个 O/RM, 也不像 FMDB 是一个 SQL wrapper。<br>特点：<br>1、学习成本非常高（即使Magical Record做了简化）<br>2、可视化和Xcode结合程度高<br>3、可以不使用sql语句<br>4、扩展性好<br>5、多线程处理不好（大部分操作需要主线程完成，会导致UI卡顿）  </p>
 <p>###FMDB<br>使用 Objective-C 封装的 SQLite API 的数据库框架，SQLite是一个开源的轻型数据库，本身API是C语言实现的，在IOS上使用不便，FMDB对其进行封装，使得方便使用之外也增加了线程安全的处理。<br>特点：<br>1、学习成本一般<br>2、完全开源<br>3、需要使用sql语句<br>4、扩展性好<br>5、多线程处理得很好   </p>
 <p>###Realm<br>由YCombinator孵化的创业团队打造，是第一个专门针对移动平台设计的数据库，Realm并不是基于Core Data，也不是基于 SQLite 所构建 ORM 的，它拥有自己的数据库存储引擎，可以高效且快速地完成数据库的构建操作。核心引擎不开源（但其承诺以后会开源）。<br>特点：<br>1、学习成本非常低<br>2、不需要使用sql语句<br>3、扩展性一般<br>4、还不够完全成熟（还在发展中）   </p>
-<p>##单条多次插入数据性能对比<br>三个数据库首次创建后抽入数据，分多字段和少字段（用json字符串方式合并）两种情况，字段的数据是随机数量的随机中文，比较性能，以下字段数据都是重复5次后获取的平均值。<br>耗时（秒）：单条多次插入1000条数据的总耗时，重复5次后的平均值<br><img src="/2017/07/24/ios-mr-fm-realm/1.png" alt="image"><br>CPU使用占比（%）：重复5次插入1000条数据时，每次插入100条数据后取样的平均值<br><img src="/2017/07/24/ios-mr-fm-realm/2.png" alt="image"></p>
-<p>##批量插入数据性能对比<br>三个数据库首次创建后抽入数据，分多字段和少字段（用json字符串方式合并）两种情况，字段的数据是随机数量的随机中文，比较性能，以下字段数据都是重复5次后获取的平均值，由于FMDB没有做事务优化，所以批量插入性能跟单次相当，如果做sql批量插入比较麻烦，而且要考虑sql语句最长长度。<br>耗时（秒）：批量插入1000条数据的总耗时，重复5次后的平均值<br><img src="/2017/07/24/ios-mr-fm-realm/3.png" alt="image"><br>CPU使用占比（%）：重复5次批量插入1000条数据时，每次插入1000条数据后取样的平均值<br><img src="/2017/07/24/ios-mr-fm-realm/4.png" alt="image"></p>
-<p>##数据查询性能对比<br>三个数据库抽入5000条数据，使用条件查询一条数据，以及不使用条件获取10条数据的性能比较，以下字段数据都是重复5次后获取的平均值。<br>耗时（秒）：查询1000次数据的总耗时，重复5次后的平均值<br><img src="/2017/07/24/ios-mr-fm-realm/5.png" alt="image"><br>CPU使用占比（%）：重复5次查询一千1000次数据时，每次查询100条数据后取样的平均值<br><img src="/2017/07/24/ios-mr-fm-realm/6.png" alt="image"></p>
-<p>##数据更新性能对比<br>三个数据库抽入5000条数据，使用条件查询一条数据，以及不使用条件获取10条数据的性能比较，以下字段数据都是重复5次后获取的平均值。<br>耗时（秒）：更新1000条数据的总耗时，重复5次后的平均值<br><img src="/2017/07/24/ios-mr-fm-realm/7.png" alt="image"><br>CPU使用占比（%）：重复5次更新1000条数据时，每次更新100条数据后取样的平均值<br><img src="/2017/07/24/ios-mr-fm-realm/8.png" alt="image">   </p>
+<p>##单条多次插入数据性能对比<br>三个数据库首次创建后抽入数据，分多字段和少字段（用json字符串方式合并）两种情况，字段的数据是随机数量的随机中文，比较性能，以下字段数据都是重复5次后获取的平均值。<br>耗时（秒）：单条多次插入1000条数据的总耗时，重复5次后的平均值<br><img src="/2017/03/08/ios-mr-fm-realm/1.png" alt="image"><br>CPU使用占比（%）：重复5次插入1000条数据时，每次插入100条数据后取样的平均值<br><img src="/2017/03/08/ios-mr-fm-realm/2.png" alt="image"></p>
+<p>##批量插入数据性能对比<br>三个数据库首次创建后抽入数据，分多字段和少字段（用json字符串方式合并）两种情况，字段的数据是随机数量的随机中文，比较性能，以下字段数据都是重复5次后获取的平均值，由于FMDB没有做事务优化，所以批量插入性能跟单次相当，如果做sql批量插入比较麻烦，而且要考虑sql语句最长长度。<br>耗时（秒）：批量插入1000条数据的总耗时，重复5次后的平均值<br><img src="/2017/03/08/ios-mr-fm-realm/3.png" alt="image"><br>CPU使用占比（%）：重复5次批量插入1000条数据时，每次插入1000条数据后取样的平均值<br><img src="/2017/03/08/ios-mr-fm-realm/4.png" alt="image"></p>
+<p>##数据查询性能对比<br>三个数据库抽入5000条数据，使用条件查询一条数据，以及不使用条件获取10条数据的性能比较，以下字段数据都是重复5次后获取的平均值。<br>耗时（秒）：查询1000次数据的总耗时，重复5次后的平均值<br><img src="/2017/03/08/ios-mr-fm-realm/5.png" alt="image"><br>CPU使用占比（%）：重复5次查询一千1000次数据时，每次查询100条数据后取样的平均值<br><img src="/2017/03/08/ios-mr-fm-realm/6.png" alt="image"></p>
+<p>##数据更新性能对比<br>三个数据库抽入5000条数据，使用条件查询一条数据，以及不使用条件获取10条数据的性能比较，以下字段数据都是重复5次后获取的平均值。<br>耗时（秒）：更新1000条数据的总耗时，重复5次后的平均值<br><img src="/2017/03/08/ios-mr-fm-realm/7.png" alt="image"><br>CPU使用占比（%）：重复5次更新1000条数据时，每次更新100条数据后取样的平均值<br><img src="/2017/03/08/ios-mr-fm-realm/8.png" alt="image">   </p>
 <p>##总结</p>
 <ol>
 <li><p>MagicalRecord数据库主要在主线完成，无论是插入、查询还是更新都有卡顿现象，暂时未找到多线程操作的方案，即使使用多线程也非常容。</p>
@@ -376,6 +377,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/iOS-MagicalRecord-FMDB-Realm/" rel="tag"># iOS MagicalRecord FMDB Realm</a>
+          
+        </div>
+      
 
       
       
@@ -385,15 +392,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/07/10/jenkins-sonar-mac/" rel="next" title="jenkins和sonar环境配置MAC版">
-                <i class="fa fa-chevron-left"></i> jenkins和sonar环境配置MAC版
-              </a>
-            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/26/ios-module-bj/" rel="prev" title="iOS模块化方案（BeeHive&JLRoutes）">
+                iOS模块化方案（BeeHive&JLRoutes） <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -470,7 +477,7 @@
             
             <div class="site-state-item site-state-tags">
               
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">标签</span>
               
             </div>
