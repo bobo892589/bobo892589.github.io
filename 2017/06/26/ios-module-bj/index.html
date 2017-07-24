@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS module," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="1.为什么要做模块化在之前iOS的项目开发中所存在的问题1、AppDelegate中包含大量库的init以及其他操作，少则几百行，多则上千行，无关代码堆积在其中，维护成本极高，不同库的调用逻辑互相交错。2、面条式的耦合，导致上层业务受限于底层基础库的依赖影响，BUG排查缓慢、新功能增加效率随代码量递增而不断递减。架构从MVC逐渐演化变成了成MVVM，VIPER等复杂架构，同时H5、ReactNat">
+<meta name="keywords" content="iOS module">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS模块化方案（BeeHive&amp;JLRoutes）">
+<meta property="og:url" content="http://dengyongbo.info/2017/06/26/ios-module-bj/index.html">
+<meta property="og:site_name" content="Benson&#39;s Blog">
+<meta property="og:description" content="1.为什么要做模块化在之前iOS的项目开发中所存在的问题1、AppDelegate中包含大量库的init以及其他操作，少则几百行，多则上千行，无关代码堆积在其中，维护成本极高，不同库的调用逻辑互相交错。2、面条式的耦合，导致上层业务受限于底层基础库的依赖影响，BUG排查缓慢、新功能增加效率随代码量递增而不断递减。架构从MVC逐渐演化变成了成MVVM，VIPER等复杂架构，同时H5、ReactNat">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://dengyongbo.info/2017/06/26/ios-module-bj/ios-module-bj/0.jpg">
+<meta property="og:image" content="http://dengyongbo.info/2017/06/26/ios-module-bj/ios-module-bj/1.jpg">
+<meta property="og:image" content="http://dengyongbo.info/2017/06/26/ios-module-bj/ios-module-bj/2.jpg">
+<meta property="og:image" content="http://dengyongbo.info/2017/06/26/ios-module-bj/ios-module-bj/3.jpg">
+<meta property="og:image" content="http://dengyongbo.info/2017/06/26/ios-module-bj/ios-module-bj/4.jpg">
+<meta property="og:image" content="http://dengyongbo.info/2017/06/26/ios-module-bj/ios-module-bj/5.jpg">
+<meta property="og:image" content="http://dengyongbo.info/2017/06/26/ios-module-bj/ios-module-bj/6.jpg">
+<meta property="og:image" content="http://dengyongbo.info/2017/06/26/ios-module-bj/ios-module-bj/7.jpg">
+<meta property="og:image" content="http://dengyongbo.info/2017/06/26/ios-module-bj/ios-module-bj/8.jpg">
+<meta property="og:image" content="http://dengyongbo.info/2017/06/26/ios-module-bj/ios-module-bj/9.jpg">
+<meta property="og:image" content="http://dengyongbo.info/2017/06/26/ios-module-bj/ios-module-bj/10.jpg">
+<meta property="og:updated_time" content="2017-07-24T09:39:40.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS模块化方案（BeeHive&amp;JLRoutes）">
+<meta name="twitter:description" content="1.为什么要做模块化在之前iOS的项目开发中所存在的问题1、AppDelegate中包含大量库的init以及其他操作，少则几百行，多则上千行，无关代码堆积在其中，维护成本极高，不同库的调用逻辑互相交错。2、面条式的耦合，导致上层业务受限于底层基础库的依赖影响，BUG排查缓慢、新功能增加效率随代码量递增而不断递减。架构从MVC逐渐演化变成了成MVVM，VIPER等复杂架构，同时H5、ReactNat">
+<meta name="twitter:image" content="http://dengyongbo.info/2017/06/26/ios-module-bj/ios-module-bj/0.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dengyongbo.info/2017/06/26/ios-module-bj/"/>
+
+
+
+
+
+  <title>iOS模块化方案（BeeHive&JLRoutes） | Benson's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Benson's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://dengyongbo.info/2017/06/26/ios-module-bj/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Benson Deng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Benson's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">iOS模块化方案（BeeHive&JLRoutes）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-26T17:34:43+08:00">
+                2017-06-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="1-为什么要做模块化"><a href="#1-为什么要做模块化" class="headerlink" title="1.为什么要做模块化"></a>1.为什么要做模块化</h2><p>在之前iOS的项目开发中所存在的问题<br>1、<code>AppDelegate</code>中包含大量库的<code>init</code>以及其他操作，少则几百行，多则上千行，无关代码堆积在其中，维护成本极高，不同库的调用逻辑互相交错。<br><img src="ios-module-bj/0.jpg" alt="image"><br>2、面条式的耦合，导致上层业务受限于底层基础库的依赖影响，BUG排查缓慢、新功能增加效率随代码量递增而不断递减。<br><img src="ios-module-bj/1.jpg" alt="image"><br>架构从<code>MVC</code>逐渐演化变成了成<code>MVVM</code>，<code>VIPER</code>等复杂架构，同时<code>H5</code>、<code>ReactNative</code>、<code>Weex</code>等技术的出现和使用，项目架构也变得更加的复杂。如何解耦各层，解耦各个界面和各个组件，降低各个组件之间的耦合度，如何能让整个系统不管多么复杂的情况下都能保持“高内聚，低耦合”的特点，这一系列的问题都摆在开发人员面前，亟待解决。</p>
+<h2 id="2-阿里开源组件化方案BeeHive"><a href="#2-阿里开源组件化方案BeeHive" class="headerlink" title="2.阿里开源组件化方案BeeHive"></a>2.阿里开源组件化方案<code>BeeHive</code></h2><p><code>BeeHive</code> 是用于<code>iOS</code> 的<code>App</code>模块化编程的框架实现方案，吸收了<code>Spring</code>框架<code>Service</code> 的理念来实现模块间的<code>API</code>耦合。基本架构如下图所示:<br><img src="ios-module-bj/2.jpg" alt="image"></p>
+<h3 id="2-1-模块生命周期的事件（模块注册）"><a href="#2-1-模块生命周期的事件（模块注册）" class="headerlink" title="2.1.模块生命周期的事件（模块注册）"></a>2.1.模块生命周期的事件（模块注册）</h3><p><code>BeeHive</code>会给每个模块提供生命周期事件，用于与<code>BeeHive</code>宿主环境进行必要信息交互，感知模块生命周期的变化。系统事件基本工作流如下图<br><img src="ios-module-bj/3.jpg" alt="image"><br>在系统事件的基础之上，扩展了应用的通用事件，例如<code>modSetup</code>、<code>modInit</code>等，可以用于编码实现各插件模块的设置与初始化。扩展的通用事件如下图<br><img src="ios-module-bj/4.jpg" alt="image"></p>
+<h3 id="2-2-模块具体实现与接口调用分离（Service注册）"><a href="#2-2-模块具体实现与接口调用分离（Service注册）" class="headerlink" title="2.2.模块具体实现与接口调用分离（Service注册）"></a>2.2.模块具体实现与接口调用分离（Service注册）</h3><p>然而业务模块需要相互调用，通过<code>Protocol</code>的进行依赖的解耦。<code>BeeHive</code>是通过注册绑定<code>Protocol</code>和<code>IMPL Class</code>来实现，代码如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[[BeeHive shareInstance] registerService:@protocol(HomeServiceProtocol) service:[BHViewController class]];  //注册绑定`Protocol`和`IMPL Class`</div><div class="line"></div><div class="line">//通过Protocol获得调用实例</div><div class="line">id&lt; HomeServiceProtocol &gt; homeService = [[BeeHive shareInstance] createService:@protocol(HomeServiceProtocol)];</div></pre></td></tr></table></figure></p>
+<h2 id="3-Github的开源URL路由工具JLRoutes"><a href="#3-Github的开源URL路由工具JLRoutes" class="headerlink" title="3.Github的开源URL路由工具JLRoutes"></a>3.Github的开源URL路由工具<code>JLRoutes</code></h2><p>JLRoutes是一个调用极少代码 , 可以很方便的处理不同URL schemes以及解析它们的参数，并通过回调block来处理URL对应的操作的三方库。  </p>
+<h3 id="3-1-使用URL实现统一跳转（APP之间、H5-amp-原生、iOS-amp-Android）"><a href="#3-1-使用URL实现统一跳转（APP之间、H5-amp-原生、iOS-amp-Android）" class="headerlink" title="3.1.使用URL实现统一跳转（APP之间、H5&amp;原生、iOS&amp;Android）"></a>3.1.使用URL实现统一跳转（APP之间、H5&amp;原生、iOS&amp;Android）</h3><p>URL（Uniform Resource Locator,统一资源定位符），是通用定位资源的位置和访问方法的一种表示，包含模式（或称协议）、服务器名称（或IP地址）、路径和文件名。<br><img src="ios-module-bj/5.jpg" alt="image"></p>
+<h3 id="3-2-RegisterRoute路由注册"><a href="#3-2-RegisterRoute路由注册" class="headerlink" title="3.2.RegisterRoute路由注册"></a>3.2.RegisterRoute路由注册</h3><p>JLRoutes全局会保存一个Map，这个Map会以scheme为Key，JLRoutes为Value。<br>在每个JLRoutes里面都保存了一个数组，这个数组里面保存了每个路由规则JLRRouteDefinition里面会保存外部传进来的block闭包，pattern，和拆分之后的pattern。<br><img src="ios-module-bj/6.jpg" alt="image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[[JLRoutes globalRoutes] addRoute:@&quot;/user/view/:userID&quot; handler:^BOOL(NSDictionary *parameters) &#123;</div><div class="line">    NSString *userID = parameters[@&quot;userID&quot;]; // defined in the route by specifying &quot;:userID&quot;</div><div class="line"></div><div class="line">    // present UI for viewing user with ID &apos;userID&apos;</div><div class="line"></div><div class="line">    return YES; // return YES to say we have handled the route</div><div class="line">  &#125;];</div></pre></td></tr></table></figure>
+<h3 id="3-3-RouteURL查找路由"><a href="#3-3-RouteURL查找路由" class="headerlink" title="3.3.RouteURL查找路由"></a>3.3.RouteURL查找路由</h3><p>根据外部传进来的URL初始化一个JLRRouteRequest，然后用这个JLRRouteRequest在当前的路由数组里面依次request，每个规则都会生成一个response，但是只有符合条件的response才会match，最后取出匹配的JLRRouteResponse拿出其字典parameters里面对应的参数。<br><img src="ios-module-bj/7.jpg" alt="image"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NSURL *viewUserURL = [NSURL URLWithString:@&quot;myapp://user/view/joeldev&quot;];</div><div class="line">[JLRoutes routeURL:viewUserURL];</div></pre></td></tr></table></figure></p>
+<h2 id="4-模块化的项目架构"><a href="#4-模块化的项目架构" class="headerlink" title="4.模块化的项目架构"></a>4.模块化的项目架构</h2><p>模块化的项目架构，目标是做到代码的拆分，代码和逻辑的解耦，避免代码侵入来实现不同技术甚至不同平台的相互调用。</p>
+<h3 id="4-1-使用Workspace、framework、CocoaPods代码模块化管理"><a href="#4-1-使用Workspace、framework、CocoaPods代码模块化管理" class="headerlink" title="4.1.使用Workspace、framework、CocoaPods代码模块化管理"></a>4.1.使用Workspace、framework、CocoaPods代码模块化管理</h3><p>使用<code>Workspace</code>多<code>Project</code>的方式管理所有代码，第三方库使用<code>CocoaPods</code>管理，所有第三方库和各个模块都将打包framework，最后统一打包进<code>APP</code>。业务模块都依赖Base、Common和第三方库，业务模块之间完全隔离。<br><img src="ios-module-bj/8.jpg" alt="image"></p>
+<h3 id="4-2-模块化方案（BeeHive-amp-JLRoutes）"><a href="#4-2-模块化方案（BeeHive-amp-JLRoutes）" class="headerlink" title="4.2.模块化方案（BeeHive&amp;JLRoutes）"></a>4.2.模块化方案（<code>BeeHive</code>&amp;<code>JLRoutes</code>）</h3><p><code>BeeHive</code>和<code>JLRoutes</code>的封装作为模块间的中间件，负责隔离各个模块，协调相互调用和页面跳转。<br><img src="ios-module-bj/9.jpg" alt="image"></p>
+<h3 id="4-3-ModuleCore中间件"><a href="#4-3-ModuleCore中间件" class="headerlink" title="4.3.ModuleCore中间件"></a>4.3.ModuleCore中间件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">// 模块化相关初始化</div><div class="line">+ (void)moduleSetupWithApplication:(UIApplication *)application options:(id)launchOptions;</div><div class="line">// 注册模块服务</div><div class="line">+ (void)registerService:(Protocol *)protocol service:(Class)serviceClass;</div><div class="line">//创建模块服务实例</div><div class="line">+ (id)createService:(Protocol *)protocol;</div><div class="line">// 添加路由规则</div><div class="line">+ (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary&lt;NSString *, id&gt; *parameters))handler;</div><div class="line">// 执行路由的URL</div><div class="line">+ (BOOL)routeURL:(NSURL *)URL;</div></pre></td></tr></table></figure>
+<h3 id="4-4-Module"><a href="#4-4-Module" class="headerlink" title="4.4.Module"></a>4.4.Module</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">// 模块初始化，统一注册服务，注册URL</div><div class="line">- (void)modInit:(BHContext *)context &#123;</div><div class="line">    [BoBoModuleCore registerService:@protocol(BoBoShareWireframeProtocol) service:[BoBoShareWireframe class]];</div><div class="line">    [BoBoShareWireframe setupGlobalRoutes];</div><div class="line">&#125;</div><div class="line">// 接收其他事件</div><div class="line">- (void)modSetUp:(BHContext *)context &#123;</div><div class="line">    NSLog(@&quot;ShareModule setup&quot;);</div><div class="line">&#125;</div><div class="line">- (void)modWillResignActive:(BHContext *)context &#123;</div><div class="line"></div><div class="line">&#125;</div><div class="line">- (void)modDidEnterBackground:(BHContext *)context &#123;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="4-5-ServiceProtocol（BeeHive）"><a href="#4-5-ServiceProtocol（BeeHive）" class="headerlink" title="4.5.ServiceProtocol（BeeHive）"></a>4.5.ServiceProtocol（BeeHive）</h3><p>通过ServiceProtocol的方式模块对外提供调用接口，从而实现模块间的调用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">id&lt;BoBoShareWireframeProtocol&gt; wireframe = [BoBoModuleCore createService:@protocol(BoBoShareWireframeProtocol)];</div><div class="line">[wireframe showShareActionSheet:self items:nil shareParams:nil onShareStateChanged:^&#123;</div><div class="line"></div><div class="line">    &#125;];</div></pre></td></tr></table></figure></p>
+<h3 id="4-6-Wireframe页面路由（JLRoutes）"><a href="#4-6-Wireframe页面路由（JLRoutes）" class="headerlink" title="4.6.Wireframe页面路由（JLRoutes）"></a>4.6.Wireframe页面路由（JLRoutes）</h3><p>这一层是用统一管理页面交互，维护URL和页面的映射关系，实现了页面拦截器（借鉴了VIPER框架）。   </p>
+<p><img src="ios-module-bj/10.jpg" alt="image"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">// 初始化路径映射注册，模块初始化时调用</div><div class="line">+ (void)setupGlobalRoutes;</div><div class="line">// 路径映射关系，需要子类重写并返回值</div><div class="line">+ (NSDictionary *)globalRoutesMap;</div><div class="line">// 跳转到指定页面</div><div class="line">- (void)pushView:(NSString *)viewType</div><div class="line">      withParams:(NSDictionary *)params</div><div class="line">      navigation:(UINavigationController *)navigation</div><div class="line">        animated:(BOOL)animated;</div><div class="line">// 弹出指定页面</div><div class="line">-(id&lt;BoBoShareControllerProtocol&gt;)showShareActionSheet:(UIViewController *)viewController</div><div class="line">                                                          items:(NSArray *)items</div><div class="line">                                                    shareParams:(NSMutableDictionary *)shareParams</div><div class="line">                                            onShareStateChanged:(void (^)())shareStateChangedHandler</div></pre></td></tr></table></figure></p>
+<p>WireframeInterceptor拦截器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// 增加一个全局起效拦截器</div><div class="line">-(void)addGlobalInterceptor:(id&lt;BoBoWireframeInterceptorProtocol&gt;)interceptor;</div><div class="line">// 执行所有的拦截方法获取结果</div><div class="line">- (void)doInterceptorWithUserInfo:(NSDictionary *)userInfo pass:(FilterHandler)pass fail:(FilterHandler)fail;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS-module/" rel="tag"># iOS module</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/10/jenkins-sonar-mac/" rel="prev" title="jenkins和sonar环境配置MAC版">
+                jenkins和sonar环境配置MAC版 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Benson Deng" />
+          <p class="site-author-name" itemprop="name">Benson Deng</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-为什么要做模块化"><span class="nav-number">1.</span> <span class="nav-text">1.为什么要做模块化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-阿里开源组件化方案BeeHive"><span class="nav-number">2.</span> <span class="nav-text">2.阿里开源组件化方案BeeHive</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-模块生命周期的事件（模块注册）"><span class="nav-number">2.1.</span> <span class="nav-text">2.1.模块生命周期的事件（模块注册）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-模块具体实现与接口调用分离（Service注册）"><span class="nav-number">2.2.</span> <span class="nav-text">2.2.模块具体实现与接口调用分离（Service注册）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Github的开源URL路由工具JLRoutes"><span class="nav-number">3.</span> <span class="nav-text">3.Github的开源URL路由工具JLRoutes</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-使用URL实现统一跳转（APP之间、H5-amp-原生、iOS-amp-Android）"><span class="nav-number">3.1.</span> <span class="nav-text">3.1.使用URL实现统一跳转（APP之间、H5&原生、iOS&Android）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-RegisterRoute路由注册"><span class="nav-number">3.2.</span> <span class="nav-text">3.2.RegisterRoute路由注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-RouteURL查找路由"><span class="nav-number">3.3.</span> <span class="nav-text">3.3.RouteURL查找路由</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-模块化的项目架构"><span class="nav-number">4.</span> <span class="nav-text">4.模块化的项目架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-使用Workspace、framework、CocoaPods代码模块化管理"><span class="nav-number">4.1.</span> <span class="nav-text">4.1.使用Workspace、framework、CocoaPods代码模块化管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-模块化方案（BeeHive-amp-JLRoutes）"><span class="nav-number">4.2.</span> <span class="nav-text">4.2.模块化方案（BeeHive&JLRoutes）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-ModuleCore中间件"><span class="nav-number">4.3.</span> <span class="nav-text">4.3.ModuleCore中间件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-Module"><span class="nav-number">4.4.</span> <span class="nav-text">4.4.Module</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-ServiceProtocol（BeeHive）"><span class="nav-number">4.5.</span> <span class="nav-text">4.5.ServiceProtocol（BeeHive）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-Wireframe页面路由（JLRoutes）"><span class="nav-number">4.6.</span> <span class="nav-text">4.6.Wireframe页面路由（JLRoutes）</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Benson Deng</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
