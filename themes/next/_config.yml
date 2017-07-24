@@ -178,8 +178,8 @@ excerpt_description: true
 # Automatically Excerpt. Not recommend.
 # Please use <!-- more --> in the post to control excerpt accurately.
 auto_excerpt:
-  enable: false
-  length: 150
+  enable: true
+  length: 400
 
 # Post meta display settings
 post_meta:
@@ -320,7 +320,7 @@ changyan:
 
 # Support for LiveRe comments system.
 # You can get your uid from https://livere.com/insight/myCode (General web site)
-#livere_uid: your uid
+livere_uid: MTAyMC8yOTcxMS82Mjc5
 
 # Baidu Share
 # Available value:
@@ -403,9 +403,9 @@ rating:
 # Show number of visitors to each article.
 # You can visit https://leancloud.cn get AppID and AppKey.
 leancloud_visitors:
-  enable: false
-  app_id: #<app_id>
-  app_key: #<app_key>
+  enable: true
+  app_id: iXL59JzUT4mXtupOhm7tlP0U-gzGzoHsz
+  app_key: XkH6UcizgEVHyvOYGEHHjSP8
 
 # Show PV/UV of the website/page with busuanzi.
 # Get more information on http://ibruce.info/2015/04/04/busuanzi/

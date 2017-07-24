@@ -12,7 +12,9 @@ sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer
 ### Atom 编辑器（随意）
 
 ### Java 安装  
-javasdk 下载地址 http://www.oracle.com/technetwork/java/javase/downloads/index.html 版本最新就好了，下Mac 版的dmg文件点击安装，环境设置都省了。
+版本最新就好了，下Mac 版的dmg文件点击安装，环境设置都省了。   
+javasdk 下载地址：   
+http://www.oracle.com/technetwork/java/javase/downloads/index.html
 ### Homebrew 安装
 官网https://brew.sh/index_zh-cn.html,`macOS`软件包管理器，有各种工具，非常有用，必装。安装命令（或者去官网查看）：
 ```
