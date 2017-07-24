@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Benson, dengyongbo" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="iOS UI测试前世今生 instrument/UIAutomation 苹果官方最早出的一个UI测试框架，用来在真实设备和iPhone模拟器上执行自动化测试，只支持JavaScript编写脚本 KIF  很早之前出的一个第三方测试框架，测试代码模仿用户操作，代码很简单，使用方式简单，可扩展性不强 EarlGrey Google不久前开源的测试框架，功能强大，可扩展性高，非常优秀的测试框架，支持到">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS UI自动化截图和测试框架">
+<meta property="og:url" content="http://dengyongbo.info/2016/07/24/ios-ui-test-snapshot/index.html">
+<meta property="og:site_name" content="Benson&#39;s Blog">
+<meta property="og:description" content="iOS UI测试前世今生 instrument/UIAutomation 苹果官方最早出的一个UI测试框架，用来在真实设备和iPhone模拟器上执行自动化测试，只支持JavaScript编写脚本 KIF  很早之前出的一个第三方测试框架，测试代码模仿用户操作，代码很简单，使用方式简单，可扩展性不强 EarlGrey Google不久前开源的测试框架，功能强大，可扩展性高，非常优秀的测试框架，支持到">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://dengyongbo.info/2016/07/24/ios-ui-test-snapshot/2.png">
+<meta property="og:image" content="http://dengyongbo.info/2016/07/24/ios-ui-test-snapshot/3.png">
+<meta property="og:image" content="http://dengyongbo.info/2016/07/24/ios-ui-test-snapshot/4.png">
+<meta property="og:image" content="http://dengyongbo.info/2016/07/24/ios-ui-test-snapshot/5.png">
+<meta property="og:image" content="http://dengyongbo.info/2016/07/24/ios-ui-test-snapshot/6.png">
+<meta property="og:image" content="http://dengyongbo.info/2016/07/24/ios-ui-test-snapshot/7.png">
+<meta property="og:image" content="http://dengyongbo.info/2016/07/24/ios-ui-test-snapshot/8.png">
+<meta property="og:image" content="http://dengyongbo.info/2016/07/24/ios-ui-test-snapshot/9.png">
+<meta property="og:image" content="http://dengyongbo.info/2016/07/24/ios-ui-test-snapshot/10.png">
+<meta property="og:updated_time" content="2017-07-24T12:56:30.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS UI自动化截图和测试框架">
+<meta name="twitter:description" content="iOS UI测试前世今生 instrument/UIAutomation 苹果官方最早出的一个UI测试框架，用来在真实设备和iPhone模拟器上执行自动化测试，只支持JavaScript编写脚本 KIF  很早之前出的一个第三方测试框架，测试代码模仿用户操作，代码很简单，使用方式简单，可扩展性不强 EarlGrey Google不久前开源的测试框架，功能强大，可扩展性高，非常优秀的测试框架，支持到">
+<meta name="twitter:image" content="http://dengyongbo.info/2016/07/24/ios-ui-test-snapshot/2.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dengyongbo.info/2016/07/24/ios-ui-test-snapshot/"/>
+
+
+
+
+
+  <title>iOS UI自动化截图和测试框架 | Benson's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Benson's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://dengyongbo.info/2016/07/24/ios-ui-test-snapshot/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Benson Deng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Benson's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">iOS UI自动化截图和测试框架</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-07-24T20:31:35+08:00">
+                2016-07-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="iOS-UI测试前世今生"><a href="#iOS-UI测试前世今生" class="headerlink" title="iOS UI测试前世今生"></a>iOS UI测试前世今生</h2><ol>
+<li>instrument/UIAutomation 苹果官方最早出的一个UI测试框架，用来在真实设备和iPhone模拟器上执行自动化测试，只支持JavaScript编写脚本</li>
+<li>KIF  很早之前出的一个第三方测试框架，测试代码模仿用户操作，代码很简单，使用方式简单，可扩展性不强</li>
+<li>EarlGrey Google不久前开源的测试框架，功能强大，可扩展性高，非常优秀的测试框架，支持到ios8以及以上，版本还不稳定不够成熟<h2 id="UI-Testing"><a href="#UI-Testing" class="headerlink" title="UI Testing"></a>UI Testing</h2>这是WWDC15推出的一个UI测试框架，基于Accessibility，使用ObjectC/Swift，非常接近于普通的开发编程。<br>特性：<br>强大的界面元素查找<br>检验界面元素<br>支持录制的代码生成   <h3 id="基于Accessibility"><a href="#基于Accessibility" class="headerlink" title="基于Accessibility"></a>基于Accessibility</h3>Accessibility 是苹果早就发布的一个框架，提供给有一定身体障碍（例如失明）的人使用，让他们能够操作和使用你的应用。他把你的 UI 以语义话的方式提供给这些用户，允许他们进行丰富的操作。你可以（也应该）让你的元素具备Accessibility的能力。</li>
+</ol>
+<h3 id="XCUIApplication"><a href="#XCUIApplication" class="headerlink" title="XCUIApplication"></a>XCUIApplication</h3><p>继承XCUIElement，这个类掌管应用程序的生命周期，里面包含两个主要方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">launch(): //启动程序</div><div class="line">terminate(): //终止程序</div></pre></td></tr></table></figure></p>
+<h3 id="XCUIElement"><a href="#XCUIElement" class="headerlink" title="XCUIElement"></a>XCUIElement</h3><p>可以表示系统的各种UI元素<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">exist: //可以让你判断当前的UI元素是否存在</div><div class="line">descendantsMatchingType(type:XCUIElementType)-&gt;XCUIElementQuery:</div><div class="line">//取某种类型的元素以及它的子类集合</div><div class="line">childrenMatchingType(type:XCUIElementType)-&gt;XCUIElementQuery:</div><div class="line">//取某种类型的元素集合，不包含它的子类</div></pre></td></tr></table></figure></p>
+<p>另外UI元素还有一些交互方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">tap  点击</div><div class="line">doubleTap 双击</div><div class="line">twoFingerTap 双指点击</div><div class="line">pressForDuration 长按</div><div class="line">swipeUp 向上滑动</div><div class="line">swipeDown 向下滑动</div><div class="line">swipeLeft 向左滑动</div><div class="line">swipeRight 向右滑动</div><div class="line">typeText 文本框输入信息</div></pre></td></tr></table></figure></p>
+<p>可通过读属性的方式取得某种类型的UI集合部分属性如下<br><img src="/2016/07/24/ios-ui-test-snapshot/2.png" alt="image"></p>
+<h3 id="代码Demo"><a href="#代码Demo" class="headerlink" title="代码Demo"></a>代码Demo</h3><p><img src="/2016/07/24/ios-ui-test-snapshot/3.png" alt="image"><br><img src="/2016/07/24/ios-ui-test-snapshot/4.png" alt="image"><br><img src="/2016/07/24/ios-ui-test-snapshot/5.png" alt="image"></p>
+<h3 id="使用xcode录制代码"><a href="#使用xcode录制代码" class="headerlink" title="使用xcode录制代码"></a>使用xcode录制代码</h3><p>打开项目的uitests代码文件，xcode下方有个红点点击就可以录制。</p>
+<h3 id="使用总结"><a href="#使用总结" class="headerlink" title="使用总结"></a>使用总结</h3><ol>
+<li>使用方式简洁明了，使用object c和swift语言容易接受</li>
+<li>局限性只能支持ios9以及以上系统版本</li>
+<li>感觉随着ios系统的升级，之后有可能会逐渐地流行起来</li>
+</ol>
+<h2 id="Fastlane-Snapshot"><a href="#Fastlane-Snapshot" class="headerlink" title="Fastlane Snapshot"></a>Fastlane Snapshot</h2><p>Fastlane Snapshot是截图测试工具，兼容UI Testing测试框架，使用配置文件进行配置使用。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo gem install snapshot</div></pre></td></tr></table></figure>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">snapshot init</div></pre></td></tr></table></figure>
+<p>配置Snapfile文件，UI测试代码加入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[Snapshot setupSnapshot:app];</div><div class="line">[Snapshot snapshot:</div><div class="line">@&quot;01LoginScreen&quot;</div><div class="line">waitForLoadingIndicator:YES];</div></pre></td></tr></table></figure></p>
+<p>cd到项目目录运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">snapshot</div></pre></td></tr></table></figure></p>
+<p><img src="/2016/07/24/ios-ui-test-snapshot/6.png" alt="image"><br><img src="/2016/07/24/ios-ui-test-snapshot/7.png" alt="image"></p>
+<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><p>运行完后的结果，生成了一个html文件和一组截图<br><img src="/2016/07/24/ios-ui-test-snapshot/8.png" alt="image"><br><img src="/2016/07/24/ios-ui-test-snapshot/9.png" alt="image"></p>
+<h2 id="集成至Jenkins和sonar"><a href="#集成至Jenkins和sonar" class="headerlink" title="集成至Jenkins和sonar"></a>集成至Jenkins和sonar</h2><p>使用Jenkins定时构建测试任务，将测试结果和代码覆盖率上传至sonar。下面是主要用到命令行。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">xcodebuild test -scheme UITestDemo -workspace UITestDemo.xcworkspace -destination &quot;platform=iOS Simulator,name=iPhone 6s,OS=10.0&quot; | xcpretty</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">slather coverage -x --output-directory sonar-reports --scheme UITestDemo --workspace UITestDemo.xcworkspace --project UITestDemo.xcodeproj</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sonar-runner</div></pre></td></tr></table></figure>
+<p><img src="/2016/07/24/ios-ui-test-snapshot/10.png" alt="image"></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/04/03/ios-hotfix-jspatch/" rel="next" title="iOS客户端热修复实践（JSPatch）">
+                <i class="fa fa-chevron-left"></i> iOS客户端热修复实践（JSPatch）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/03/ios-android-opencv-build-usage/" rel="prev" title="OpenCV的编译和使用（iOS&Android）">
+                OpenCV的编译和使用（iOS&Android） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Benson Deng" />
+          <p class="site-author-name" itemprop="name">Benson Deng</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS-UI测试前世今生"><span class="nav-number">1.</span> <span class="nav-text">iOS UI测试前世今生</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UI-Testing"><span class="nav-number">2.</span> <span class="nav-text">UI Testing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基于Accessibility"><span class="nav-number">2.1.</span> <span class="nav-text">基于Accessibility</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XCUIApplication"><span class="nav-number">2.2.</span> <span class="nav-text">XCUIApplication</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XCUIElement"><span class="nav-number">2.3.</span> <span class="nav-text">XCUIElement</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码Demo"><span class="nav-number">2.4.</span> <span class="nav-text">代码Demo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用xcode录制代码"><span class="nav-number">2.5.</span> <span class="nav-text">使用xcode录制代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用总结"><span class="nav-number">2.6.</span> <span class="nav-text">使用总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fastlane-Snapshot"><span class="nav-number">3.</span> <span class="nav-text">Fastlane Snapshot</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">3.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用"><span class="nav-number">3.2.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果"><span class="nav-number">3.3.</span> <span class="nav-text">运行结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#集成至Jenkins和sonar"><span class="nav-number">4.</span> <span class="nav-text">集成至Jenkins和sonar</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Benson Deng</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

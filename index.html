@@ -757,7 +757,282 @@
 <h4 id="3、Import-Module"><a href="#3、Import-Module" class="headerlink" title="3、Import Module"></a>3、Import Module</h4><p>1）Android Studio菜单–&gt;File–&gt;New–&gt;Import Module<br>2）选择OpenCV-android-sdk/sdk/java<br>3）Module name: Android studio会自动填充这项为openCVLibrary310 ，不用管它.<br>4）点击下一步，会出现三个复选框，都选上，点击Finish<br><img src="/2017/03/03/ios-android-opencv-build-usage/7.png" alt="image"><br><img src="/2017/03/03/ios-android-opencv-build-usage/8.png" alt="image"><br><img src="/2017/03/03/ios-android-opencv-build-usage/9.png" alt="image"></p>
 <h4 id="4、Add-Dependency"><a href="#4、Add-Dependency" class="headerlink" title="4、Add Dependency"></a>4、Add Dependency</h4><p>1）File–&gt;Project Structure<br>2）左边Modules栏下选择app<br>3）在右边上面一栏中选择Dependencies<br>4）点击右边栏中的“＋”，选择第三个Module Dependency<br>5）点击ok退出，然后再点击ok退出<br><img src="/2017/03/03/ios-android-opencv-build-usage/10.jpg" alt="image"><br><img src="/2017/03/03/ios-android-opencv-build-usage/11.jpg" alt="image"><br><img src="/2017/03/03/ios-android-opencv-build-usage/12.jpg" alt="image"><br><img src="/2017/03/03/ios-android-opencv-build-usage/13.jpg" alt="image"><br><img src="/2017/03/03/ios-android-opencv-build-usage/14.jpg" alt="image"><br><img src="/2017/03/03/ios-android-opencv-build-usage/15.jpg" alt="image">   </p>
 <h4 id="5、修改gradle"><a href="#5、修改gradle" class="headerlink" title="5、修改gradle"></a>5、修改gradle</h4><p>1）将视图由Android切换到Project，如图所示<br>2）点击app，打开app根目录下的build.gradle文件，记下<br>compileSdkVersion<br>buildToolsVersion<br>minSdkVersion<br>targetSdkVersion<br>后面的数值<br>3）点击openCVLibrary310,打开根目录下的build.gradle文件，把文件中<br>compileSdkVersion<br>buildToolsVersion<br>minSdkVersion<br>targetSdkVersion<br>后的数值改成app中一样的<br>4）点击上方Gradle project sync一行中的Try Again<br><img src="/2017/03/03/ios-android-opencv-build-usage/16.jpg" alt="image"><br><img src="/2017/03/03/ios-android-opencv-build-usage/17.jpg" alt="image"><br><img src="/2017/03/03/ios-android-opencv-build-usage/18.jpg" alt="image"><br><img src="/2017/03/03/ios-android-opencv-build-usage/19.jpg" alt="image"><br><img src="/2017/03/03/ios-android-opencv-build-usage/20.jpg" alt="image">   </p>
-<h4 id="6、复制opencv的libs到项目中"><a href="#6、复制opencv的libs到项目中" class="headerlink" title="6、复制opencv的libs到项目中"></a>6、复制opencv的libs到项目中</h4><p>1）把OpenCV sdk for Android文件下F:\OpenCV-android-sdk\sdk\native下的libs文件夹拷贝到你的安卓项目下，即Opencvtest\app\src\main下面，并且将libs改名为jniLibs<br>2）此时前期准备工作就完成了，接下来可以用opencv中程序测试下<br>3）打开你的主活动MainActivity.java文件，记下包名，我的是package    com.xiaoma.opencvtest;，则我的包名就是com.xiaoma.opencvtest   </p>
+<h4 id="6、复制opencv的libs到项目中"><a href="#6、复制opencv的libs到项目中" class="headerlink" title="6、复制opencv的libs到项目中"></a>6、复制opencv的libs到项目中</h4><p>1）把OpenCV sdk for Android文件下F:\OpenCV-android-sdk\sdk\native下的libs文件夹拷贝到你的安卓项目下，即Opencvtest\app\src\main下面，并且将libs改名为jniLibs<br>2）此时前期准备工作就完成了，接下来可以用opencv中程序测试下<br>3）打开你的主活动MainActivity.java文件，记下包名，我的是package    com.xiaoma.opencvtest;，则我的包名就是com.xiaoma.opencvtest<br><img src="/2017/03/03/ios-android-opencv-build-usage/21.jpg" alt="image"><br><img src="/2017/03/03/ios-android-opencv-build-usage/22.jpg" alt="image"><br><img src="/2017/03/03/ios-android-opencv-build-usage/23.png" alt="image">   </p>
+<h4 id="7、复制opencv的res到项目中"><a href="#7、复制opencv的res到项目中" class="headerlink" title="7、复制opencv的res到项目中"></a>7、复制opencv的res到项目中</h4><p>1）将<code>OpenCV-android-sdk\samples\image-manipulations\res</code>中的三个文件（如图所示），拷贝到你的安卓项目<code>Opencvtest\app\src\main\res</code>下（拷贝前先将此目录下的同名的三个文件删掉<br>2）将<code>OpenCV-android-sdk\samples\image-manipulations</code>中的<code>AndroidManifest.xml</code>文件，拷贝到你的安卓项目<code>Opencvtest\app\src\main</code>下替换<br>3）将<code>OpenCV-android-sdk\samples\image-manipulations\src\org\opencv\samples\imagemanipulations</code>中的<code>ImageManipulationsActivity.java</code>文件，<br>拷贝到你的安卓项目<code>Opencvtest\app\src\main\java\com\xiaoma\opencvtest</code>下，并且把原来的<code>MainActivity.java</code>文件删掉。其中<code>\com\xiaoma\</code>这段根据每个人的包名不同会不一样。<br><img src="/2017/03/03/ios-android-opencv-build-usage/24.png" alt="image">   </p>
+<h4 id="8、复制opencv的例子代码到项目中"><a href="#8、复制opencv的例子代码到项目中" class="headerlink" title="8、复制opencv的例子代码到项目中"></a>8、复制opencv的例子代码到项目中</h4><p>1）在Android Studio中打开<code>ImageManipulationsActivity.java</code>，<code>AndroidManifest.xml</code><br>2）把文件中的包名，换成第六步骤中你记下的包名<br>3）<code>AndroidManifest.xml</code>文件下的<code>uses-sdk android:minSdkVersion</code>的值改成第五步骤中记下的值<br>4）注意这一步在改<code>AndroidManifest.xml</code>文件中的包名时不要把原来的“”给粘贴没了。</p>
+<h4 id="9、注意"><a href="#9、注意" class="headerlink" title="9、注意"></a>9、注意</h4><p>有些手机运行时可能会弹出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">It seems that you device does not support camera(or it is locked).Application will be closed.</div></pre></td></tr></table></figure></p>
+<p>这时候打开手机应用权限管理，找到该程序应用，把它的相机的权限改为允许就可以了。</p>
+<h4 id="7-本文用到的demo"><a href="#7-本文用到的demo" class="headerlink" title="7. 本文用到的demo"></a>7. 本文用到的demo</h4>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://dengyongbo.info/2016/07/24/ios-ui-test-snapshot/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Benson Deng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Benson's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/07/24/ios-ui-test-snapshot/" itemprop="url">iOS UI自动化截图和测试框架</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-07-24T20:31:35+08:00">
+                2016-07-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="iOS-UI测试前世今生"><a href="#iOS-UI测试前世今生" class="headerlink" title="iOS UI测试前世今生"></a>iOS UI测试前世今生</h2><ol>
+<li>instrument/UIAutomation 苹果官方最早出的一个UI测试框架，用来在真实设备和iPhone模拟器上执行自动化测试，只支持JavaScript编写脚本</li>
+<li>KIF  很早之前出的一个第三方测试框架，测试代码模仿用户操作，代码很简单，使用方式简单，可扩展性不强</li>
+<li>EarlGrey Google不久前开源的测试框架，功能强大，可扩展性高，非常优秀的测试框架，支持到ios8以及以上，版本还不稳定不够成熟<h2 id="UI-Testing"><a href="#UI-Testing" class="headerlink" title="UI Testing"></a>UI Testing</h2>这是WWDC15推出的一个UI测试框架，基于Accessibility，使用ObjectC/Swift，非常接近于普通的开发编程。<br>特性：<br>强大的界面元素查找<br>检验界面元素<br>支持录制的代码生成   <h3 id="基于Accessibility"><a href="#基于Accessibility" class="headerlink" title="基于Accessibility"></a>基于Accessibility</h3>Accessibility 是苹果早就发布的一个框架，提供给有一定身体障碍（例如失明）的人使用，让他们能够操作和使用你的应用。他把你的 UI 以语义话的方式提供给这些用户，允许他们进行丰富的操作。你可以（也应该）让你的元素具备Accessibility的能力。</li>
+</ol>
+<h3 id="XCUIApplication"><a href="#XCUIApplication" class="headerlink" title="XCUIApplication"></a>XCUIApplication</h3><p>继承XCUIElement，这个类掌管应用程序的生命周期，里面包含两个主要方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">launch(): //启动程序</div><div class="line">terminate(): //终止程序</div></pre></td></tr></table></figure></p>
+<h3 id="XCUIElement"><a href="#XCUIElement" class="headerlink" title="XCUIElement"></a>XCUIElement</h3><p>可以表示系统的各种UI元素<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">exist: //可以让你判断当前的UI元素是否存在</div><div class="line">descendantsMatchingType(type:XCUIElementType)-&gt;XCUIElementQuery:</div><div class="line">//取某种类型的元素以及它的子类集合</div><div class="line">childrenMatchingType(type:XCUIElementType)-&gt;XCUIElementQuery:</div><div class="line">//取某种类型的元素集合，不包含它的子类</div></pre></td></tr></table></figure></p>
+<p>另外UI元素还有一些交互方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">tap  点击</div><div class="line">doubleTap 双击</div><div class="line">twoFingerTap 双指点击</div><div class="line">pressForDuration 长按</div><div class="line">swipeUp 向上滑动</div><div class="line">swipeDown 向下滑动</div><div class="line">swipeLeft 向左滑动</div><div class="line">swipeRight 向右滑动</div><div class="line">typeText 文本框输入信息</div></pre></td></tr></table></figure></p>
+<p>可通过读属性的方式取得某种类型的UI集合部分属性如下<br><img src="/2016/07/24/ios-ui-test-snapshot/2.png" alt="image"></p>
+<h3 id="代码Demo"><a href="#代码Demo" class="headerlink" title="代码Demo"></a>代码Demo</h3><p><img src="/2016/07/24/ios-ui-test-snapshot/3.png" alt="image"><br><img src="/2016/07/24/ios-ui-test-snapshot/4.png" alt="image"><br><img src="/2016/07/24/ios-ui-test-snapshot/5.png" alt="image"></p>
+<h3 id="使用xcode录制代码"><a href="#使用xcode录制代码" class="headerlink" title="使用xcode录制代码"></a>使用xcode录制代码</h3><p>打开项目的uitests代码文件，xcode下方有个红点点击就可以录制。</p>
+<h3 id="使用总结"><a href="#使用总结" class="headerlink" title="使用总结"></a>使用总结</h3><ol>
+<li>使用方式简洁明了，使用object c和swift语言容易接受</li>
+<li>局限性只能支持ios9以及以上系统版本</li>
+<li>感觉随着ios系统的升级，之后有可能会逐渐地流行起来</li>
+</ol>
+<h2 id="Fastlane-Snapshot"><a href="#Fastlane-Snapshot" class="headerlink" title="Fastlane Snapshot"></a>Fastlane Snapshot</h2><p>Fastlane Snapshot是截图测试工具，兼容UI Testing测试框架，使用配置文件进行配置使用。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo gem install snapshot</div></pre></td></tr></table></figure>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">snapshot init</div></pre></td></tr></table></figure>
+<p>配置Snapfile文件，UI测试代码加入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[Snapshot setupSnapshot:app];</div><div class="line">[Snapshot snapshot:</div><div class="line">@&quot;01LoginScreen&quot;</div><div class="line">waitForLoadingIndicator:YES];</div></pre></td></tr></table></figure></p>
+<p>cd到项目目录运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">snapshot</div></pre></td></tr></table></figure></p>
+<p><img src="/2016/07/24/ios-ui-test-snapshot/6.png" alt="image"><br><img src="/2016/07/24/ios-ui-test-snapshot/7.png" alt="image"></p>
+<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><p>运行完后的结果，生成了一个html文件和一组截图<br><img src="/2016/07/24/ios-ui-test-snapshot/8.png" alt="image"><br><img src="/2016/07/24/ios-ui-test-snapshot/9.png" alt="image"></p>
+<h2 id="集成至Jenkins和sonar"><a href="#集成至Jenkins和sonar" class="headerlink" title="集成至Jenkins和sonar"></a>集成至Jenkins和sonar</h2><p>使用Jenkins定时构建测试任务，将测试结果和代码覆盖率上传至sonar。下面是主要用到命令行。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">xcodebuild test -scheme UITestDemo -workspace UITestDemo.xcworkspace -destination &quot;platform=iOS Simulator,name=iPhone 6s,OS=10.0&quot; | xcpretty</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">slather coverage -x --output-directory sonar-reports --scheme UITestDemo --workspace UITestDemo.xcworkspace --project UITestDemo.xcodeproj</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sonar-runner</div></pre></td></tr></table></figure>
+<p><img src="/2016/07/24/ios-ui-test-snapshot/10.png" alt="image"></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://dengyongbo.info/2016/04/03/ios-hotfix-jspatch/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Benson Deng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Benson's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/04/03/ios-hotfix-jspatch/" itemprop="url">iOS客户端热修复实践（JSPatch）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-04-03T20:17:58+08:00">
+                2016-04-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="客户端的痛"><a href="#客户端的痛" class="headerlink" title="客户端的痛"></a>客户端的痛</h2><p>在线上APP发布以后，最痛苦的事情莫过于发现紧急的BUG，一旦发现马上加班开发的改BUG，测试通过然后上传新包。前面几步都还好说，关系到都是自己人，加班加点是免不了的了。对于iOS客户端来说，上传新包之后就苹果审核，过去来说一周是正常的，现在审核提速了，也得一两天，审核之后用户需要下载整个包覆盖安装，用户也不会及时地去更新，整个流程中耗费时间长但是效果极差。为了快速地修复iOS App的线上问题，需要引进一个热修复的方案。</p>
+<h2 id="JSPatch与Wax-WaxPatch对比"><a href="#JSPatch与Wax-WaxPatch对比" class="headerlink" title="JSPatch与Wax/WaxPatch对比"></a>JSPatch与Wax/WaxPatch对比</h2><p>iOS热修复方案在很早之前就已经出现在游戏领域，毕竟游戏的完整安装包经常是百兆以上，每次为一个BUG下载整个包不现实，WaxPatch正是为此出现，比如当年风靡一时的《Angry Birds》就是使用 Wax Lua 开发的，还有JSCocoa等。下图对了一下JSPatch和 WaxPatch优缺点，得出JSPatch更适合引进成为APP热修复方案的工具。<br><img src="/2016/04/03/ios-hotfix-jspatch/1.png" alt="image"></p>
+<h2 id="JSPatch的简介和实现原理"><a href="#JSPatch的简介和实现原理" class="headerlink" title="JSPatch的简介和实现原理"></a>JSPatch的简介和实现原理</h2><p>JSPatch诞生于2015年5月，是腾讯广研高级iOS开发@bang的个人项目，放到github开源至今获得了43000多个star和700多fork。该项目一直在持续开发中，同时推出一些支持产品，如JSPatch 代码自动转换工具 和 JSPatch 服务平台。<br>Github链接：<a href="https://github.com/bang590/JSPatch" target="_blank" rel="external">https://github.com/bang590/JSPatch</a><br>OC和JS自动转换：<a href="http://bang590.github.io/JSPatchConvertor/" target="_blank" rel="external">http://bang590.github.io/JSPatchConvertor/</a><br>能做到通过JS调用和改写OC方法最根本的原因是 Objective-C 是动态语言，OC上所有方法的调用/类的生成都通过 Objective-C Runtime 在运行时进行，我们可以通过类名/方法名反射得到相应的类和方法，也可以替换某个类的方法为新的实现，还可以新注册一个类，为类添加方法。关于Objective-C 对象模型和动态消息发送的原理详细可看看这篇文章<a href="http://blog.csdn.net/kesalin/article/details/6689226。" target="_blank" rel="external">http://blog.csdn.net/kesalin/article/details/6689226。</a><br>理论上你可以在运行时通过类名/方法名调用到任何Object C方法，替换任何类的实现以及新增任意类。所以 JSPatch 的基本原理就是：启动一个JS语言的解析引擎，通过 Runtime 接口调用和替换 Object C 方法的实现。更详细可以看JSPatch作者写的 <a href="https://github.com/bang590/JSPatch/wiki/JSPatch-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3" target="_blank" rel="external">https://github.com/bang590/JSPatch/wiki/JSPatch-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3</a> 原理详解。通过这个原理基本可以实现新增类、新增类的方法或者替换类的方法、支持调用Object C方法、Block、self、特殊类型等等。</p>
+<h2 id="热修复实施方案"><a href="#热修复实施方案" class="headerlink" title="热修复实施方案"></a>热修复实施方案</h2><p>JSPatch仅仅是一个工具，用于补丁包加载到应用从而修复BUG，但是APP是安装到每个用户的手机上，如果将补丁包下发到每个用户安装的APP的上，还需围绕JSPatch搭建一个前后端的使用平台，平台方案包含补丁版本控制、安全策略、客户端策略、异常处理四个方面，从而保证补丁包安全及时地下发到每一安装了APP的用户手机上。</p>
+<h3 id="补丁版本控制"><a href="#补丁版本控制" class="headerlink" title="补丁版本控制"></a>补丁版本控制</h3><p>补丁包是使用JS代码，仅仅是为修复BUG而写，并不能真正做开发源码，所以每一个使用JSPatch修复的BUG，后面版本都会用Object-C修复，补丁JS代码不会存留超过一个版本。需要做到有多个补丁同时被某个版本按顺序加载，补丁后一个版本可以是修复新BUG，或是覆盖上一个补丁的代码。<br>补丁版本应该如下图所示。<br><img src="/2016/04/03/ios-hotfix-jspatch/2.png" alt="image">   </p>
+<h3 id="安全策略"><a href="#安全策略" class="headerlink" title="安全策略"></a>安全策略</h3><p>补丁包包含一些可执行的代码，这是比较敏感的数据，不应该直接暴露，需要考虑在传输和保存加入加密保护。服务器端和客户端的数据传输使用HTTPS，下载后通过MD5校验完整性，在客户端加密保存补丁包时加密。<br><img src="/2016/04/03/ios-hotfix-jspatch/3.png" alt="image"></p>
+<h3 id="客户端策略"><a href="#客户端策略" class="headerlink" title="客户端策略"></a>客户端策略</h3><p>在APP启动后，首先启动JSPatch的引擎，将已经下载的补丁包校验后加载运行，实时地替换调有问题的ObjectC代码实现。客户端需要定时2个小时去检查服务器端是否有新的补丁包，保证实时性，下载后马上校验后加载运行并保存以备下次启动首先被运行。补丁包校验包含MD5完整性和根据文件名确认是否适用于当前系统。整个流程如下图所示<br><img src="/2016/04/03/ios-hotfix-jspatch/4.png" alt="image"></p>
+<h3 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h3><p>客户端加载patch后可能会出现两种crash情况的问题。1、是在启动加载时发生；2、是在触发某一个操作时发生。<br>1的话需要在客户端做保护，用trycatch保护，保证其在启动加载中的可能crash，之后从后端更新或者删除补丁同步至客户端。2依靠当前使用的crashlytics进行监控，发现问题删除补丁或者使用下一个补丁替换，下一次启动修复问题。</p>
+<h2 id="补丁包命名规范"><a href="#补丁包命名规范" class="headerlink" title="补丁包命名规范"></a>补丁包命名规范</h2><p>规范补丁包命名，根据补丁包的标准命名后端可以使用代码解析出补丁包的信息，同时方便管理和定位补丁包。标准命名规范如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">app名称_设备类型_APP版本_系统版本范围（~）_补丁包版本. apatch</div></pre></td></tr></table></figure></p>
+<p>设备类型：0代表iOS，1代表安卓。<br>APP版本：应用的版本，比如2.0.0<br>系统版本范围：设备操作系统版本，暂时只支持大版本号，比如ios7到ios9写为7~9<br>补丁包版本：补丁包的版本，比如第一个补丁包写为1第二个写2依次类推。<br>例如app2.0.0的一个补丁包，只应用在ios的8到9中：<br>xxxapp_0_2.0.0_8~9_1.apatch</p>
+<h2 id="开发流程"><a href="#开发流程" class="headerlink" title="开发流程"></a>开发流程</h2><p>在某一个上线如果发现线上问题，开发人员开发和制作的热修复补丁包，按照应用版本、系统平台、系统版本区分放置在后端。开发和制作按照以下流程进行。</p>
+<ol>
+<li>新版本封包发布，svn 新建tag_ release_2.0.0(copy from trunk)</li>
+<li>发现线上BUG；</li>
+<li>新建hot fix分支，svn新建2.0.0_bugfix<em>1(copy from tag</em> release_2.0.0)</li>
+<li>编写OC代码修复相应的BUG，符合补丁包开发规范并测试通过</li>
+<li>根据的svn提交，抽离修改后方法和类，使用JSPatchConvertor制作补丁包；</li>
+<li>按照应用版本、系统平台、系统版本区分提交补丁包至后端；</li>
+<li>测试通过正式上线。</li>
+<li>由于补丁包编写规范有太多限制，dev_2.0.0_bugfix_1根据情况合并至trunk</li>
+</ol>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>这个方案使用几个版本了，在线上出现问题能够及时去解决，不用走那么多步骤，不用等待苹果审核，更不用麻烦用户为了我们的一个BUG重新更新一个包，可以说效果立竿见影。不过对开发来说有一个问题就是写一个JS版本的补丁包特别痛苦，缺乏代码提示、缺乏Debug工具、缺乏开发工具。总结一句就是结局是美好的但过程是艰辛的，这些还有可以优化的地方可以区努力改善。</p>
 
           
         
@@ -838,7 +1113,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

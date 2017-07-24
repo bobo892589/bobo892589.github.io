@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Benson, dengyongbo" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="客户端的痛在线上APP发布以后，最痛苦的事情莫过于发现紧急的BUG，一旦发现马上加班开发的改BUG，测试通过然后上传新包。前面几步都还好说，关系到都是自己人，加班加点是免不了的了。对于iOS客户端来说，上传新包之后就苹果审核，过去来说一周是正常的，现在审核提速了，也得一两天，审核之后用户需要下载整个包覆盖安装，用户也不会及时地去更新，整个流程中耗费时间长但是效果极差。为了快速地修复iOS App的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS客户端热修复实践（JSPatch）">
+<meta property="og:url" content="http://dengyongbo.info/2016/04/03/ios-hotfix-jspatch/index.html">
+<meta property="og:site_name" content="Benson&#39;s Blog">
+<meta property="og:description" content="客户端的痛在线上APP发布以后，最痛苦的事情莫过于发现紧急的BUG，一旦发现马上加班开发的改BUG，测试通过然后上传新包。前面几步都还好说，关系到都是自己人，加班加点是免不了的了。对于iOS客户端来说，上传新包之后就苹果审核，过去来说一周是正常的，现在审核提速了，也得一两天，审核之后用户需要下载整个包覆盖安装，用户也不会及时地去更新，整个流程中耗费时间长但是效果极差。为了快速地修复iOS App的">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://dengyongbo.info/2016/04/03/ios-hotfix-jspatch/1.png">
+<meta property="og:image" content="http://dengyongbo.info/2016/04/03/ios-hotfix-jspatch/2.png">
+<meta property="og:image" content="http://dengyongbo.info/2016/04/03/ios-hotfix-jspatch/3.png">
+<meta property="og:image" content="http://dengyongbo.info/2016/04/03/ios-hotfix-jspatch/4.png">
+<meta property="og:updated_time" content="2017-07-24T12:28:40.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS客户端热修复实践（JSPatch）">
+<meta name="twitter:description" content="客户端的痛在线上APP发布以后，最痛苦的事情莫过于发现紧急的BUG，一旦发现马上加班开发的改BUG，测试通过然后上传新包。前面几步都还好说，关系到都是自己人，加班加点是免不了的了。对于iOS客户端来说，上传新包之后就苹果审核，过去来说一周是正常的，现在审核提速了，也得一两天，审核之后用户需要下载整个包覆盖安装，用户也不会及时地去更新，整个流程中耗费时间长但是效果极差。为了快速地修复iOS App的">
+<meta name="twitter:image" content="http://dengyongbo.info/2016/04/03/ios-hotfix-jspatch/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dengyongbo.info/2016/04/03/ios-hotfix-jspatch/"/>
+
+
+
+
+
+  <title>iOS客户端热修复实践（JSPatch） | Benson's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Benson's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://dengyongbo.info/2016/04/03/ios-hotfix-jspatch/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Benson Deng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Benson's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">iOS客户端热修复实践（JSPatch）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-04-03T20:17:58+08:00">
+                2016-04-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="客户端的痛"><a href="#客户端的痛" class="headerlink" title="客户端的痛"></a>客户端的痛</h2><p>在线上APP发布以后，最痛苦的事情莫过于发现紧急的BUG，一旦发现马上加班开发的改BUG，测试通过然后上传新包。前面几步都还好说，关系到都是自己人，加班加点是免不了的了。对于iOS客户端来说，上传新包之后就苹果审核，过去来说一周是正常的，现在审核提速了，也得一两天，审核之后用户需要下载整个包覆盖安装，用户也不会及时地去更新，整个流程中耗费时间长但是效果极差。为了快速地修复iOS App的线上问题，需要引进一个热修复的方案。</p>
+<h2 id="JSPatch与Wax-WaxPatch对比"><a href="#JSPatch与Wax-WaxPatch对比" class="headerlink" title="JSPatch与Wax/WaxPatch对比"></a>JSPatch与Wax/WaxPatch对比</h2><p>iOS热修复方案在很早之前就已经出现在游戏领域，毕竟游戏的完整安装包经常是百兆以上，每次为一个BUG下载整个包不现实，WaxPatch正是为此出现，比如当年风靡一时的《Angry Birds》就是使用 Wax Lua 开发的，还有JSCocoa等。下图对了一下JSPatch和 WaxPatch优缺点，得出JSPatch更适合引进成为APP热修复方案的工具。<br><img src="/2016/04/03/ios-hotfix-jspatch/1.png" alt="image"></p>
+<h2 id="JSPatch的简介和实现原理"><a href="#JSPatch的简介和实现原理" class="headerlink" title="JSPatch的简介和实现原理"></a>JSPatch的简介和实现原理</h2><p>JSPatch诞生于2015年5月，是腾讯广研高级iOS开发@bang的个人项目，放到github开源至今获得了43000多个star和700多fork。该项目一直在持续开发中，同时推出一些支持产品，如JSPatch 代码自动转换工具 和 JSPatch 服务平台。<br>Github链接：<a href="https://github.com/bang590/JSPatch" target="_blank" rel="external">https://github.com/bang590/JSPatch</a><br>OC和JS自动转换：<a href="http://bang590.github.io/JSPatchConvertor/" target="_blank" rel="external">http://bang590.github.io/JSPatchConvertor/</a><br>能做到通过JS调用和改写OC方法最根本的原因是 Objective-C 是动态语言，OC上所有方法的调用/类的生成都通过 Objective-C Runtime 在运行时进行，我们可以通过类名/方法名反射得到相应的类和方法，也可以替换某个类的方法为新的实现，还可以新注册一个类，为类添加方法。关于Objective-C 对象模型和动态消息发送的原理详细可看看这篇文章<a href="http://blog.csdn.net/kesalin/article/details/6689226。" target="_blank" rel="external">http://blog.csdn.net/kesalin/article/details/6689226。</a><br>理论上你可以在运行时通过类名/方法名调用到任何Object C方法，替换任何类的实现以及新增任意类。所以 JSPatch 的基本原理就是：启动一个JS语言的解析引擎，通过 Runtime 接口调用和替换 Object C 方法的实现。更详细可以看JSPatch作者写的 <a href="https://github.com/bang590/JSPatch/wiki/JSPatch-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3" target="_blank" rel="external">https://github.com/bang590/JSPatch/wiki/JSPatch-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3</a> 原理详解。通过这个原理基本可以实现新增类、新增类的方法或者替换类的方法、支持调用Object C方法、Block、self、特殊类型等等。</p>
+<h2 id="热修复实施方案"><a href="#热修复实施方案" class="headerlink" title="热修复实施方案"></a>热修复实施方案</h2><p>JSPatch仅仅是一个工具，用于补丁包加载到应用从而修复BUG，但是APP是安装到每个用户的手机上，如果将补丁包下发到每个用户安装的APP的上，还需围绕JSPatch搭建一个前后端的使用平台，平台方案包含补丁版本控制、安全策略、客户端策略、异常处理四个方面，从而保证补丁包安全及时地下发到每一安装了APP的用户手机上。</p>
+<h3 id="补丁版本控制"><a href="#补丁版本控制" class="headerlink" title="补丁版本控制"></a>补丁版本控制</h3><p>补丁包是使用JS代码，仅仅是为修复BUG而写，并不能真正做开发源码，所以每一个使用JSPatch修复的BUG，后面版本都会用Object-C修复，补丁JS代码不会存留超过一个版本。需要做到有多个补丁同时被某个版本按顺序加载，补丁后一个版本可以是修复新BUG，或是覆盖上一个补丁的代码。<br>补丁版本应该如下图所示。<br><img src="/2016/04/03/ios-hotfix-jspatch/2.png" alt="image">   </p>
+<h3 id="安全策略"><a href="#安全策略" class="headerlink" title="安全策略"></a>安全策略</h3><p>补丁包包含一些可执行的代码，这是比较敏感的数据，不应该直接暴露，需要考虑在传输和保存加入加密保护。服务器端和客户端的数据传输使用HTTPS，下载后通过MD5校验完整性，在客户端加密保存补丁包时加密。<br><img src="/2016/04/03/ios-hotfix-jspatch/3.png" alt="image"></p>
+<h3 id="客户端策略"><a href="#客户端策略" class="headerlink" title="客户端策略"></a>客户端策略</h3><p>在APP启动后，首先启动JSPatch的引擎，将已经下载的补丁包校验后加载运行，实时地替换调有问题的ObjectC代码实现。客户端需要定时2个小时去检查服务器端是否有新的补丁包，保证实时性，下载后马上校验后加载运行并保存以备下次启动首先被运行。补丁包校验包含MD5完整性和根据文件名确认是否适用于当前系统。整个流程如下图所示<br><img src="/2016/04/03/ios-hotfix-jspatch/4.png" alt="image"></p>
+<h3 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h3><p>客户端加载patch后可能会出现两种crash情况的问题。1、是在启动加载时发生；2、是在触发某一个操作时发生。<br>1的话需要在客户端做保护，用trycatch保护，保证其在启动加载中的可能crash，之后从后端更新或者删除补丁同步至客户端。2依靠当前使用的crashlytics进行监控，发现问题删除补丁或者使用下一个补丁替换，下一次启动修复问题。</p>
+<h2 id="补丁包命名规范"><a href="#补丁包命名规范" class="headerlink" title="补丁包命名规范"></a>补丁包命名规范</h2><p>规范补丁包命名，根据补丁包的标准命名后端可以使用代码解析出补丁包的信息，同时方便管理和定位补丁包。标准命名规范如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">app名称_设备类型_APP版本_系统版本范围（~）_补丁包版本. apatch</div></pre></td></tr></table></figure></p>
+<p>设备类型：0代表iOS，1代表安卓。<br>APP版本：应用的版本，比如2.0.0<br>系统版本范围：设备操作系统版本，暂时只支持大版本号，比如ios7到ios9写为7~9<br>补丁包版本：补丁包的版本，比如第一个补丁包写为1第二个写2依次类推。<br>例如app2.0.0的一个补丁包，只应用在ios的8到9中：<br>xxxapp_0_2.0.0_8~9_1.apatch</p>
+<h2 id="开发流程"><a href="#开发流程" class="headerlink" title="开发流程"></a>开发流程</h2><p>在某一个上线如果发现线上问题，开发人员开发和制作的热修复补丁包，按照应用版本、系统平台、系统版本区分放置在后端。开发和制作按照以下流程进行。</p>
+<ol>
+<li>新版本封包发布，svn 新建tag_ release_2.0.0(copy from trunk)</li>
+<li>发现线上BUG；</li>
+<li>新建hot fix分支，svn新建2.0.0_bugfix<em>1(copy from tag</em> release_2.0.0)</li>
+<li>编写OC代码修复相应的BUG，符合补丁包开发规范并测试通过</li>
+<li>根据的svn提交，抽离修改后方法和类，使用JSPatchConvertor制作补丁包；</li>
+<li>按照应用版本、系统平台、系统版本区分提交补丁包至后端；</li>
+<li>测试通过正式上线。</li>
+<li>由于补丁包编写规范有太多限制，dev_2.0.0_bugfix_1根据情况合并至trunk</li>
+</ol>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>这个方案使用几个版本了，在线上出现问题能够及时去解决，不用走那么多步骤，不用等待苹果审核，更不用麻烦用户为了我们的一个BUG重新更新一个包，可以说效果立竿见影。不过对开发来说有一个问题就是写一个JS版本的补丁包特别痛苦，缺乏代码提示、缺乏Debug工具、缺乏开发工具。总结一句就是结局是美好的但过程是艰辛的，这些还有可以优化的地方可以区努力改善。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/24/ios-ui-test-snapshot/" rel="prev" title="iOS UI自动化截图和测试框架">
+                iOS UI自动化截图和测试框架 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Benson Deng" />
+          <p class="site-author-name" itemprop="name">Benson Deng</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#客户端的痛"><span class="nav-number">1.</span> <span class="nav-text">客户端的痛</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JSPatch与Wax-WaxPatch对比"><span class="nav-number">2.</span> <span class="nav-text">JSPatch与Wax/WaxPatch对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JSPatch的简介和实现原理"><span class="nav-number">3.</span> <span class="nav-text">JSPatch的简介和实现原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#热修复实施方案"><span class="nav-number">4.</span> <span class="nav-text">热修复实施方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#补丁版本控制"><span class="nav-number">4.1.</span> <span class="nav-text">补丁版本控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安全策略"><span class="nav-number">4.2.</span> <span class="nav-text">安全策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#客户端策略"><span class="nav-number">4.3.</span> <span class="nav-text">客户端策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异常处理"><span class="nav-number">4.4.</span> <span class="nav-text">异常处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补丁包命名规范"><span class="nav-number">5.</span> <span class="nav-text">补丁包命名规范</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开发流程"><span class="nav-number">6.</span> <span class="nav-text">开发流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最后"><span class="nav-number">7.</span> <span class="nav-text">最后</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Benson Deng</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
