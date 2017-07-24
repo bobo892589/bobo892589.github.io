@@ -323,7 +323,8 @@
         
           
           系统工具安装Xcode 安装打开一下Xcode安装CommandLineTools，尝试一下xcodebuild命令，如果不行，指定一下Xcode安装目录1sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer
-Ato
+Atom 编辑器（随意）Java 安装javasdk 下载地址 http://www.oracle.com/technetwork/java/javase/downloads/index.html 版本最新就好了，下Mac 版的dmg文件点击安装，环境设置都省了。
+Homebrew 安装官网https://brew.sh/index_zh-cn.html,`macOS`软件包管理器，有各种工具，非常有用，必装。安装命令（或者去官网查看）：1/usr/bin/ruby -e &quot;$(curl -
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -441,7 +442,8 @@ Ato
       
         
           
-          1.为什么要做模块化在之前iOS的项目开发中所存在的问题1、AppDelegate中包含大量库的init以及其他操作，少则几百行，多则上千行，无关代码堆积在其中，维护成本极高，不同库的调用逻辑互相交错。2、面条式的耦合，导致上层业务受限于底层基础库的依赖影响，BUG排查缓慢、新功能增加效率随代码量递
+          1.为什么要做模块化在之前iOS的项目开发中所存在的问题1、AppDelegate中包含大量库的init以及其他操作，少则几百行，多则上千行，无关代码堆积在其中，维护成本极高，不同库的调用逻辑互相交错。2、面条式的耦合，导致上层业务受限于底层基础库的依赖影响，BUG排查缓慢、新功能增加效率随代码量递增而不断递减。架构从MVC逐渐演化变成了成MVVM，VIPER等复杂架构，同时H5、ReactNative、Weex等技术的出现和使用，项目架构也变得更加的复杂。如何解耦各层，解耦各个界面和各个组件，降低各个组件之间的耦合度，如何能让整个系统不管多么复杂的情况下都能保持“高内聚，低耦合”的特点，这一系列的问题都摆在开发人员面前，亟待解决。
+2.阿里开源组件化方案BeeHiveBeeHive 是用于iOS 的App模块化编程的框架实现方案，吸收了Spring框架Service 的理念来实现模块间的
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -559,7 +561,8 @@ Ato
       
         
           
-          iOS持久化有很多种方式，对于大量的数据持久化必然要使用DBMS技术，当前移动平台可选DBMS技术并不多，本文将对当前流行三个的数据库进行分析评估。主要是侧重于在iOS平台上不同方式（多字段和少字段（用json字符串方式合并））性能方面的表现。文中所涉及的数据是基于以下的环境生成。设备：iPhone
+          iOS持久化有很多种方式，对于大量的数据持久化必然要使用DBMS技术，当前移动平台可选DBMS技术并不多，本文将对当前流行三个的数据库进行分析评估。主要是侧重于在iOS平台上不同方式（多字段和少字段（用json字符串方式合并））性能方面的表现。文中所涉及的数据是基于以下的环境生成。设备：iPhone 5siOS系统：10.2   
+介绍MagicalRecordMagical Record是用来操作Core Data的一个第三方工具，而Core Data则是iOS的内置框架，一个模型层的技术. Core Data 本身既不是数据库也不是数据库访问框架.相反,Core Data是一个完整的数据模型解决方案。可以理解为对持久层的封装，使得我们可以通过可视化建立数据模型,简化数据存取. Core Data不是一个 O/RM, 也不像 FMDB 是一个 SQL wrapper。特点：1、学习成本非
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -677,7 +680,8 @@ Ato
       
         
           
-          OpenCV简介OpenCV的全称是：Open Source Computer Vision Library。OpenCV是一个基于BSD许可（开源）发行的跨平台计算机视觉库，可以运行在Linux、Windows、Android和Mac OS操作系统上。它轻量级而且高效——由一系列 C 函数和少量 
+          OpenCV简介OpenCV的全称是：Open Source Computer Vision Library。OpenCV是一个基于BSD许可（开源）发行的跨平台计算机视觉库，可以运行在Linux、Windows、Android和Mac OS操作系统上。它轻量级而且高效——由一系列 C 函数和少量 C++ 类构成，同时提供了Python、Ruby、MATLAB等语言的接口，实现了图像处理和计算机视觉方面的很多通用算法。GITHUB地址：https://github.com/opencv/opencv.git官方网站：http://opencv.org/downloads.html各种编译好的包下载地址：https://sourceforge.net/projects/opencvlibrary/files/
+C++ 项目Xcode的配置OpenCV的示例代码都是用C++写的，在iOS调用比
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -798,7 +802,7 @@ Ato
           iOS UI测试前世今生
 instrument/UIAutomation 苹果官方最早出的一个UI测试框架，用来在真实设备和iPhone模拟器上执行自动化测试，只支持JavaScript编写脚本
 KIF  很早之前出的一个第三方测试框架，测试代码模仿用户操作，代码很简单，使用方式简单，可扩展性不强
-
+EarlGrey Google不久前开源的测试框架，功能强大，可扩展性高，非常优秀的测试框架，支持到ios8以及以上，版本还不稳定不够成熟UI Testing这是WWDC15推出的一个UI测试框架，基于Accessibility，使用ObjectC/Swift，非常接近于普通的开发编程。特性：强大的界面元素查找检验界面元素支持录制的代码生成   基于AccessibilityAccessibility 是苹果早就发布的一个框架，提供给有一定身体障碍（例如失明）的人使用，让他们能够操作和使用你的应
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -916,7 +920,8 @@ KIF  很早之前出的一个第三方测试框架，测试代码模仿用户操
       
         
           
-          客户端的痛在线上APP发布以后，最痛苦的事情莫过于发现紧急的BUG，一旦发现马上加班开发的改BUG，测试通过然后上传新包。前面几步都还好说，关系到都是自己人，加班加点是免不了的了。对于iOS客户端来说，上传新包之后就苹果审核，过去来说一周是正常的，现在审核提速了，也得一两天，审核之后用户需要下载整个
+          客户端的痛在线上APP发布以后，最痛苦的事情莫过于发现紧急的BUG，一旦发现马上加班开发的改BUG，测试通过然后上传新包。前面几步都还好说，关系到都是自己人，加班加点是免不了的了。对于iOS客户端来说，上传新包之后就苹果审核，过去来说一周是正常的，现在审核提速了，也得一两天，审核之后用户需要下载整个包覆盖安装，用户也不会及时地去更新，整个流程中耗费时间长但是效果极差。为了快速地修复iOS App的线上问题，需要引进一个热修复的方案。
+JSPatch与Wax/WaxPatch对比iOS热修复方案在很早之前就已经出现在游戏领域，毕竟游戏的完整安装包经常是百兆以上，每次为一个BUG下载整个包不现实，WaxPatch正是为此出现，比如当年风靡一时的《Angry Birds》就是使用 Wax Lua 开发的，还有JSCocoa等。下图对了一下JSPatch和 WaxPatch优缺点，得出JSPatc
           ...
           <!--noindex-->
           <div class="post-button text-center">
