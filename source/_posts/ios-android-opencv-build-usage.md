@@ -151,3 +151,24 @@ targetSdkVersion
 1）把OpenCV sdk for Android文件下F:\OpenCV-android-sdk\sdk\native下的libs文件夹拷贝到你的安卓项目下，即Opencvtest\app\src\main下面，并且将libs改名为jniLibs   
 2）此时前期准备工作就完成了，接下来可以用opencv中程序测试下   
 3）打开你的主活动MainActivity.java文件，记下包名，我的是package    com.xiaoma.opencvtest;，则我的包名就是com.xiaoma.opencvtest   
+![image](ios-android-opencv-build-usage/21.jpg)    
+![image](ios-android-opencv-build-usage/22.jpg)   
+![image](ios-android-opencv-build-usage/23.png)   
+#### 7、复制opencv的res到项目中
+1）将`OpenCV-android-sdk\samples\image-manipulations\res`中的三个文件（如图所示），拷贝到你的安卓项目`Opencvtest\app\src\main\res`下（拷贝前先将此目录下的同名的三个文件删掉   
+2）将`OpenCV-android-sdk\samples\image-manipulations`中的`AndroidManifest.xml`文件，拷贝到你的安卓项目`Opencvtest\app\src\main`下替换   
+3）将`OpenCV-android-sdk\samples\image-manipulations\src\org\opencv\samples\imagemanipulations`中的`ImageManipulationsActivity.java`文件，
+拷贝到你的安卓项目`Opencvtest\app\src\main\java\com\xiaoma\opencvtest`下，并且把原来的`MainActivity.java`文件删掉。其中`\com\xiaoma\`这段根据每个人的包名不同会不一样。
+![image](ios-android-opencv-build-usage/24.png)   
+#### 8、复制opencv的例子代码到项目中
+1）在Android Studio中打开`ImageManipulationsActivity.java`，`AndroidManifest.xml`
+2）把文件中的包名，换成第六步骤中你记下的包名   
+3）`AndroidManifest.xml`文件下的`uses-sdk android:minSdkVersion`的值改成第五步骤中记下的值   
+4）注意这一步在改`AndroidManifest.xml`文件中的包名时不要把原来的“”给粘贴没了。
+#### 9、注意
+有些手机运行时可能会弹出
+```
+It seems that you device does not support camera(or it is locked).Application will be closed.
+```
+这时候打开手机应用权限管理，找到该程序应用，把它的相机的权限改为允许就可以了。
+#### 7. 本文用到的demo
