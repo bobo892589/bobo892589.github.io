@@ -4,6 +4,21 @@
 
     
   <url>
+    <loc>https://bobo892589.github.io/2016/04/03/ios-hotfix-jspatch/</loc>
+    <lastmod>2017-07-25T03:59:00.000Z</lastmod>
+    <data>
+        <display>
+        <title>iOS客户端热修复实践（JSPatch）</title>
+        <pubTime>2016-04-03T12:17:58.000Z</pubTime>
+        
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://bobo892589.github.io/2017/07/10/jenkins-sonar-mac/</loc>
     <lastmod>2017-07-25T03:57:37.000Z</lastmod>
     <data>
@@ -45,21 +60,6 @@
         <display>
         <title>iOS UI自动化截图和测试框架</title>
         <pubTime>2016-07-24T12:31:35.000Z</pubTime>
-        
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://bobo892589.github.io/2016/04/03/ios-hotfix-jspatch/</loc>
-    <lastmod>2017-07-24T12:28:40.000Z</lastmod>
-    <data>
-        <display>
-        <title>iOS客户端热修复实践（JSPatch）</title>
-        <pubTime>2016-04-03T12:17:58.000Z</pubTime>
         
          
            
