@@ -26,6 +26,7 @@ category_dir: categories
 code_dir: downloads/code
 i18n_dir: :lang
 skip_render:
+  - "google3788b027072413f5.html"
 
 # Writing
 new_post_name: :title.md # File name of new posts
@@ -80,3 +81,10 @@ deploy:
   type: git
   repository: https://github.com/bobo892589/bobo892589.github.io
   branch: master
+
+
+# 自动生成sitemap
+sitemap:
+  path: sitemap.xml
+baidusitemap:
+  path: baidusitemap.xml
