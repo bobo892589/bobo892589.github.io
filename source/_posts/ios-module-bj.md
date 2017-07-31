@@ -60,7 +60,7 @@ NSURL *viewUserURL = [NSURL URLWithString:@"myapp://user/view/joeldev"];
 模块化的项目架构，目标是做到代码的拆分，代码和逻辑的解耦，避免代码侵入来实现不同技术甚至不同平台的相互调用。
 ### 4.1.使用Workspace、framework、CocoaPods代码模块化管理
 使用`Workspace`多`Project`的方式管理所有代码，第三方库使用`CocoaPods`管理，所有第三方库和各个模块都将打包framework，最后统一打包进`APP`。业务模块都依赖Base、Common和第三方库，业务模块之间完全隔离。
-![image](ios-module-bj/8.jpg)
+![image](ios-module-bj/8.png)
 
 ### 4.2.模块化方案（`BeeHive`&`JLRoutes`）
 `BeeHive`和`JLRoutes`的封装作为模块间的中间件，负责隔离各个模块，协调相互调用和页面跳转。    
@@ -83,8 +83,8 @@ NSURL *viewUserURL = [NSURL URLWithString:@"myapp://user/view/joeldev"];
 ```
 // 模块初始化，统一注册服务，注册URL
 - (void)modInit:(BHContext *)context {
-    [BoBoModuleCore registerService:@protocol(BoBoShareWireframeProtocol) service:[BoBoShareWireframe class]];
-    [BoBoShareWireframe setupGlobalRoutes];
+    [ModuleCore registerService:@protocol( ShareWireframeProtocol) service:[ShareWireframe class]];
+    [ShareWireframe setupGlobalRoutes];
 }
 // 接收其他事件
 - (void)modSetUp:(BHContext *)context {
@@ -100,7 +100,7 @@ NSURL *viewUserURL = [NSURL URLWithString:@"myapp://user/view/joeldev"];
 ### 4.5.ServiceProtocol（BeeHive）
 通过ServiceProtocol的方式模块对外提供调用接口，从而实现模块间的调用。
 ```
-id<BoBoShareWireframeProtocol> wireframe = [BoBoModuleCore createService:@protocol(BoBoShareWireframeProtocol)];
+id<ShareWireframeProtocol> wireframe = [ModuleCore createService:@protocol(ShareWireframeProtocol)];
 [wireframe showShareActionSheet:self items:nil shareParams:nil onShareStateChanged:^{
 
     }];
@@ -120,7 +120,7 @@ id<BoBoShareWireframeProtocol> wireframe = [BoBoModuleCore createService:@protoc
       navigation:(UINavigationController *)navigation
         animated:(BOOL)animated;
 // 弹出指定页面
--(id<BoBoShareControllerProtocol>)showShareActionSheet:(UIViewController *)viewController
+-(id<ShareControllerProtocol>)showShareActionSheet:(UIViewController *)viewController
                                                           items:(NSArray *)items
                                                     shareParams:(NSMutableDictionary *)shareParams
                                             onShareStateChanged:(void (^)())shareStateChangedHandler
@@ -128,7 +128,7 @@ id<BoBoShareWireframeProtocol> wireframe = [BoBoModuleCore createService:@protoc
 WireframeInterceptor拦截器
 ```
 // 增加一个全局起效拦截器
--(void)addGlobalInterceptor:(id<BoBoWireframeInterceptorProtocol>)interceptor;
+-(void)addGlobalInterceptor:(id<WireframeInterceptorProtocol>)interceptor;
 // 执行所有的拦截方法获取结果
 - (void)doInterceptorWithUserInfo:(NSDictionary *)userInfo pass:(FilterHandler)pass fail:(FilterHandler)fail;
 ```

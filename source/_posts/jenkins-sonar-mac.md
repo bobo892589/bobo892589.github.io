@@ -16,7 +16,7 @@ sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer
 javasdk 下载地址：   
 http://www.oracle.com/technetwork/java/javase/downloads/index.html
 ### Homebrew 安装
-官网https://brew.sh/index_zh-cn.html,`macOS`软件包管理器，有各种工具，非常有用，必装。安装命令（或者去官网查看）：
+官网 https://brew.sh/index_zh-cn.html ,`macOS`软件包管理器，有各种工具，非常有用，必装。安装命令（或者去官网查看）：
 ```
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
@@ -123,7 +123,7 @@ cd <clone_directory>  #就是在pom.xml文件的目录
 mvn package
 ```
 ### ObjectiveC扩展包（ObjectiveC）
-sonar-objective-c的原作者已经不再更新了，`fork`里面一直还在更新的是：https://github.com/Backelite/sonar-objective-c ，在交友210用的是：https://github.com/mjdetullio/sonar-objective-c/network ，Backelite已经支持到oclint0.11了，基本是最新的，所以采用是Backelite的版本。先copy里面的`profile-oclint.xml`和`rules.txt`这两个文件出来， 切换到版本`12b2a7a`再把原先的两个文件覆盖回去，这样保证最新rules，这样基本不会出现找不到规则的错误。
+sonar-objective-c的原作者已经不再更新了，`fork`里面一直还在更新的是：https://github.com/Backelite/sonar-objective-c ，在之前也用过：https://github.com/mjdetullio/sonar-objective-c/network ，不过Backelite已经支持到oclint0.11了，基本是最新的，所以采用是Backelite的版本。先copy里面的`profile-oclint.xml`和`rules.txt`这两个文件出来， 切换到版本`12b2a7a`再把原先的两个文件覆盖回去，这样保证最新rules，这样基本不会出现找不到规则的错误。
 ```
 cd <clone_directory>  #就是在pom.xml文件的目录
 mvn package
@@ -172,7 +172,7 @@ switch statements don't need default when fully covered
     <string>com.launchctl.sonarqube</string>
     <key>ProgramArguments</key>
     <array>
-      <string>/Users/cc/Develop/sonarqube-5.3/bin/macosx-universal-64/sonar.sh</string>
+      <string><sonarqube_install_dir>/bin/macosx-universal-64/sonar.sh</string>
       <string>start</string>
     </array>
     <key>RunAtLoad</key>
@@ -183,17 +183,17 @@ switch statements don't need default when fully covered
 launchctl常用命令
 ```
 # 加载plist
-launchctl load /Users/cc/Develop/sonarqube-5.3/com.launchctl.sonarqube.plist
+launchctl load <sonarqube_install_dir>/com.launchctl.sonarqube.plist
 # 卸载plist
-launchctl unload /Users/cc/Develop/sonarqube-5.3/com.launchctl.sonarqube.plist
+launchctl unload <sonarqube_install_dir>/com.launchctl.sonarqube.plist
 # 立刻执行plist的内容
-launchctl start /Users/cc/Develop/sonarqube-5.3/com.launchctl.sonarqube.plist
+launchctl start <sonarqube_install_dir>/com.launchctl.sonarqube.plist
 # 立刻停止plist的内容
-launchctl stop /Users/cc/Develop/sonarqube-5.3/com.launchctl.sonarqube.plist
+launchctl stop <sonarqube_install_dir>/com.launchctl.sonarqube.plist
 # 列出所有plist
 launchctl list
 ```
-注意：launchctl unload和stop并未停止sonar的服务，还需要调用一下`/Users/cc/Develop/sonarqube-5.3/bin/macosx-universal-64/sonar.sh stop`。
+注意：launchctl unload和stop并未停止sonar的服务，还需要调用一下`<sonarqube_install_dir>/bin/macosx-universal-64/sonar.sh stop`。
 ### 配置外网访问
 
 修改<install_directory>/conf/sonar.properties，修改host，访问路径/sonar，禁止直接访问。
@@ -227,11 +227,11 @@ ProxyRequests     Off
 直接使用sonar服务本身webapi，更详细文档参考https://sonarcloud.io/web_api/
 ```
 #!/bin/bash
-ACCOUNTS=('gzlichangjie' 'gzdaifan' 'gzdengyongbo' 'gzzouzelong' 'gzzhuzhejun' 'gzchenzhenxuan' 'gzdaisongsong' 'gzlaizuling' 'gzpangchaohui' 'gztanwen')
+ACCOUNTS=('user1' 'user2' 'user3')
 for ACCOUNT in ${ACCOUNTS[*]}
 do
 	echo $ACCOUNT
-  curl -u admin:<admin_password> -d "login=$ACCOUNT&name=$ACCOUNT&password=$ACCOUNT" "http://10.255.213.95/sonar/api/users/create"
+  curl -u admin:<admin_password> -d "login=$ACCOUNT&name=$ACCOUNT&password=$ACCOUNT" "http://xxx.xxx.xxx.xxx/sonar/api/users/create"
 done
 ```
 
@@ -286,7 +286,7 @@ Gradle Plugin :可以不用写脚本调用Gradle
 ### 批量创建用户
 进入http://<sever_url>/script，使用groovy脚本来批量创建用户，创建脚本如下：
 ```
-def accounts = ['gzlichangjie','gzdaifan','gzdengyongbo','gzzouzelong','gzzhuzhejun','gzchenzhenxuan','gzdaisongsong','gzlaizuling','gzpangchaohui','gztanwen']
+def accounts = ['user1','user2','user3']
 for(int i = 0;i<accounts.size;i++) {
   println(accounts.get(i))
   jenkins.model.Jenkins.instance.securityRealm.createAccount(accounts.get(i), accounts.get(i))
@@ -304,7 +304,7 @@ export LC_ALL=en_US.UTF-8
 iOS
 ```
 cd <project_dir>
-xcodebuild -scheme bobo -workspace vshow.xcworkspace -sdk iphonesimulator -configuration Debug clean build | tee xcodebuild.log | xcpretty --report json-compilation-database --output compile_commands.json
+xcodebuild -scheme XXXX -workspace XXXX.xcworkspace -sdk iphonesimulator -configuration Debug clean build | tee xcodebuild.log | xcpretty --report json-compilation-database --output compile_commands.json
 oclint-json-compilation-database -v -e Pods -- -report-type=pmd -o=sonar-reports/oclint.xml
 //项目根目录下需要配置好的sonar-project.properties文件
 <sonar-scanner_dir>sonar-runner -X
