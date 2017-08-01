@@ -145,3 +145,88 @@ cocoapods 引入：
 pod 'CocoaAsyncSocket', '~> 7.5.1'
 ```
 ### 源码实现
+```
+- (IBAction)onConnect:(id)sender {
+    NSLog(@"onConnect !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    self.socket =  [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+    [self.socket connectToHost:@"127.0.0.1" onPort:6969 error:nil];
+}
+
+- (IBAction)onSendBuf:(id)sender {
+    NSMutableData *data =  [[NSData dataWithBytes:"\x01" length:1] mutableCopy];//head
+    Msg1 *msg1 = [Msg1 new];
+    msg1.field1 = @"client-msg1Field1";
+    msg1.field2 = 789987;
+    msg1.field3 = @"client-msg1Field3";
+    [data appendData:[msg1 data]]; //content
+    [data appendData:[GCDAsyncSocket CRLFData]]; //flag
+    [self.socket writeData:data withTimeout:-1 tag:110];
+}
+
+- (IBAction)onSendBuf2:(id)sender {
+
+    NSMutableData *data =  [[NSData dataWithBytes:"\x02" length:1] mutableCopy];//head
+    Msg2 *msg2 = [Msg2 new];
+    msg2.field4 = 667667;
+    msg2.field5 = @"client-msg2Field2";
+    msg2.field6 = @"client-msg2Field3";
+    [data appendData:[msg2 data]]; //content
+    [data appendData:[GCDAsyncSocket CRLFData]]; //flag
+    [self.socket writeData:data withTimeout:-1 tag:110];
+}
+
+#pragma mark - GCDAsyncSocketDelegate
+
+//连接成功调用
+- (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
+    NSLog(@"连接成功,host:%@,port:%d",host,port);
+    [sock readDataToData:[GCDAsyncSocket CRLFData] withTimeout:-1 tag:110];
+}
+
+//断开连接的时候调用
+- (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(nullable NSError *)err {
+    NSLog(@"断开连接,host:%@,port:%d",sock.localHost,sock.localPort);
+}
+
+//写的回调
+- (void)socket:(GCDAsyncSocket*)sock didWriteDataWithTag:(long)tag {
+    NSLog(@"写的回调,tag:%ld",tag);
+}
+
+
+- (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
+    NSLog(@"收到消息：%@",data);
+    if (data.length > 3) {
+        const char *bytes = [data bytes];
+        unsigned char type = bytes[0];
+        NSData *protobuf = [data subdataWithRange:NSMakeRange(1, data.length - 3)];
+        if (type == '\x01') {
+            Msg1 *msg1 = [[Msg1 alloc] initWithData:protobuf error:nil];
+            NSLog(@"Msg1 : field1:%@ | field2:%d | field3:%@", msg1.field1, (int)msg1.field2, msg1.field3);
+        } else if (type == '\x02') {
+            Msg2 *msg2 = [[Msg2 alloc] initWithData:protobuf error:nil];
+            NSLog(@"Msg2 : field4:%d | field5:%@ | field6:%@", (int)msg2.field4, msg2.field5, msg2.field6);
+        }
+    }
+
+    [sock readDataToData:[GCDAsyncSocket CRLFData] withTimeout:-1 tag:110];
+}
+```
+理解`readDataToData:withTimeout:tag:`方法
+```
+//读取数据，有数据就会触发代理
+- (void)readDataWithTimeout:(NSTimeInterval)timeout tag:(long)tag;
+//直到读到这个长度的数据，才会触发代理
+- (void)readDataToLength:(NSUInteger)length withTimeout:(NSTimeInterval)timeout tag:(long)tag;
+//直到读到data这个边界，才会触发代理
+- (void)readDataToData:(NSData *)data withTimeout:(NSTimeInterval)timeout tag:(long)tag;
+```
+这个框架每次读取数据，必须手动的去调用上述这些read方法，而我们之前的实现思路是，第一次连接成功的代理触发后调用，之后每次收到消息之后，都在去调用一次这个方法，超时为-1，即不超时。这样我们每次收到消息，都会即时触发我们读取消息的代理。   
+这里使用读取到指定边界这个方法`readDataToData:withTimeout:tag:`，这样CocoaAsyncSocket就帮我们完成断包粘包的问题，同时也实现使用分隔符来识别数据包的问题。分隔符要跟服务器那边统一`0x0D`和`0x0A`其实它就是一个`\r\n`。   
+protobuf的数据编码和解析也非常简单：
+```
+[msg1 data] //编码为二进制数据
+[[Msg2 alloc] initWithData:protobuf error:nil];  //解析数据
+```
+## 总结一下
+Socket对于即时通讯，对于要求即时性高业务是必不可少，而protobuf二进制序列化，虽然相比于json之类的无法肉眼可见可随时编辑，然后它的优点也明显更简洁更快，在一些性能要求的业务会是最好的选择。这里技术探索还是比较简单的，特别是socket，udp是一个非常重要的选择，会在以后更多地去接触和学习。
