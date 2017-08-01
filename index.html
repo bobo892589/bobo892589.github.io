@@ -254,6 +254,137 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://bobo892589.github.io/2017/07/22/socket-protobuf-nodejs-ios/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Benson Deng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Benson's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/22/socket-protobuf-nodejs-ios/" itemprop="url">基于GoogleProtobuf的TCPSocket通信（nodeJS Server、iOS Client）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-22T20:22:11+08:00">
+                2017-07-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/07/22/socket-protobuf-nodejs-ios/" class="leancloud_visitors" data-flag-title="基于GoogleProtobuf的TCPSocket通信（nodeJS Server、iOS Client）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          本文这是一个在socket中使用protobuf的一个尝试，算是比较简单的尝试。考虑到测试一下跨平台，所以这里是使用NodeJS实现服务端，ObjectC实现客户端，同时也实现了socket链接和数据分隔，protobuf数据类型判断和解析。
+Protobuf源码地址：https://github.com/google/protobufGoogle的一种数据交换的格式，开源的，具有空间开销小、解析速度快、兼容性好等优点，非常适合于对性能要求高的一些场景中。特别是对于即时通讯，就效率和成本而言，二进制协议明显优于http这样的文本协议。
+TCP Socket网络上的两个程序通过一个双向的通信连接实现数据的交换，这个连接的一端称为一个socket。或者理解为：Socket=Ip address+ TCP/UDP + port。这里用的是tcp协议，主要还是考虑简单的问题，tcp特性就是可靠，有
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/07/22/socket-protobuf-nodejs-ios/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://bobo892589.github.io/2017/07/10/jenkins-sonar-mac/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1074,7 +1205,7 @@ JSPatch与Wax/WaxPatch对比iOS热修复方案在很早之前就已经出现在�
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-count">7</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1087,7 +1218,7 @@ JSPatch与Wax/WaxPatch对比iOS热修复方案在很早之前就已经出现在�
             
             <div class="site-state-item site-state-tags">
               
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">标签</span>
               
             </div>

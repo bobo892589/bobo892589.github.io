@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ios socket protobuf nodejs," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="本文这是一个在socket中使用protobuf的一个尝试，算是比较简单的尝试。考虑到测试一下跨平台，所以这里是使用NodeJS实现服务端，ObjectC实现客户端，同时也实现了socket链接和数据分隔，protobuf数据类型判断和解析。 Protobuf源码地址：https://github.com/google/protobufGoogle的一种数据交换的格式，开源的，具有空间开销小、解析">
+<meta name="keywords" content="ios socket protobuf nodejs">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于GoogleProtobuf的TCPSocket通信（nodeJS Server、iOS Client）">
+<meta property="og:url" content="https://bobo892589.github.io/2017/07/22/socket-protobuf-nodejs-ios/index.html">
+<meta property="og:site_name" content="Benson&#39;s Blog">
+<meta property="og:description" content="本文这是一个在socket中使用protobuf的一个尝试，算是比较简单的尝试。考虑到测试一下跨平台，所以这里是使用NodeJS实现服务端，ObjectC实现客户端，同时也实现了socket链接和数据分隔，protobuf数据类型判断和解析。 Protobuf源码地址：https://github.com/google/protobufGoogle的一种数据交换的格式，开源的，具有空间开销小、解析">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-08-01T02:54:17.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于GoogleProtobuf的TCPSocket通信（nodeJS Server、iOS Client）">
+<meta name="twitter:description" content="本文这是一个在socket中使用protobuf的一个尝试，算是比较简单的尝试。考虑到测试一下跨平台，所以这里是使用NodeJS实现服务端，ObjectC实现客户端，同时也实现了socket链接和数据分隔，protobuf数据类型判断和解析。 Protobuf源码地址：https://github.com/google/protobufGoogle的一种数据交换的格式，开源的，具有空间开销小、解析">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://bobo892589.github.io/2017/07/22/socket-protobuf-nodejs-ios/"/>
+
+
+
+
+
+  <title>基于GoogleProtobuf的TCPSocket通信（nodeJS Server、iOS Client） | Benson's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Benson's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://bobo892589.github.io/2017/07/22/socket-protobuf-nodejs-ios/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Benson Deng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Benson's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">基于GoogleProtobuf的TCPSocket通信（nodeJS Server、iOS Client）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-22T20:22:11+08:00">
+                2017-07-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/07/22/socket-protobuf-nodejs-ios/" class="leancloud_visitors" data-flag-title="基于GoogleProtobuf的TCPSocket通信（nodeJS Server、iOS Client）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文这是一个在socket中使用protobuf的一个尝试，算是比较简单的尝试。考虑到测试一下跨平台，所以这里是使用NodeJS实现服务端，ObjectC实现客户端，同时也实现了socket链接和数据分隔，protobuf数据类型判断和解析。</p>
+<h2 id="Protobuf"><a href="#Protobuf" class="headerlink" title="Protobuf"></a>Protobuf</h2><p>源码地址：<a href="https://github.com/google/protobuf" target="_blank" rel="external">https://github.com/google/protobuf</a><br>Google的一种数据交换的格式，开源的，具有空间开销小、解析速度快、兼容性好等优点，非常适合于对性能要求高的一些场景中。特别是对于即时通讯，就效率和成本而言，二进制协议明显优于http这样的文本协议。</p>
+<h2 id="TCP-Socket"><a href="#TCP-Socket" class="headerlink" title="TCP Socket"></a>TCP Socket</h2><p>网络上的两个程序通过一个双向的通信连接实现数据的交换，这个连接的一端称为一个socket。或者理解为：Socket=Ip address+ TCP/UDP + port。<br>这里用的是tcp协议，主要还是考虑简单的问题，tcp特性就是可靠，有序，为了做到这些，TCP三次握手，每个包有序号，收到会有确认包，还有重传机制，当然还有更多一些机制来保证传输的可靠有序性。<br>然而在网络差的时候，tcp的优势也会边劣势，这也就是为啥qq是以udp协议为主。如果使用udp，那些需要上层实现来考虑数据的可靠，有序，这需要相当大的工作量，但对于业务的发展、服务器的负载、更多网络环境的适应，udp是非常重要的方向，也是以后探索的一个方向。</p>
+<h2 id="NodeJS服务器端实现"><a href="#NodeJS服务器端实现" class="headerlink" title="NodeJS服务器端实现"></a>NodeJS服务器端实现</h2><p>这是<a href="https://github.com/bobo892589/socket_server_demo" target="_blank" rel="external">github的demo源码</a></p>
+<h3 id="NodeJS中Protobuf的第三方模块"><a href="#NodeJS中Protobuf的第三方模块" class="headerlink" title="NodeJS中Protobuf的第三方模块"></a>NodeJS中Protobuf的第三方模块</h3><p>常用主要有三种：<br>protobuf.js : <a href="https://github.com/dcodeIO/ProtoBuf.js" target="_blank" rel="external">https://github.com/dcodeIO/ProtoBuf.js</a><br>Google : <a href="https://github.com/google/protobuf/tree/master/js" target="_blank" rel="external">https://github.com/google/protobuf/tree/master/js</a><br>protocol-buffers : <a href="https://github.com/mafintosh/protocol-buffers" target="_blank" rel="external">https://github.com/mafintosh/protocol-buffers</a><br>这里选用的是protobuf.js。安装全局模块（可以使用命令行工具pbjs）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install -g protobufjs</div></pre></td></tr></table></figure></p>
+<h3 id="proto文件"><a href="#proto文件" class="headerlink" title="proto文件"></a>proto文件</h3><p>.proto 文件是 Protocol Buffers 的结构化数据定义，结构化数据被称为 Message。<br>定义一个msg.proto文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">syntax = &quot;proto3&quot;;</div><div class="line">package msg;</div><div class="line"></div><div class="line">message Msg1 &#123;</div><div class="line">    string field1 = 1;</div><div class="line">    int32 field2 = 2;</div><div class="line">    string field3 = 3;</div><div class="line">&#125;</div><div class="line"></div><div class="line">message Msg2 &#123;</div><div class="line">    int32 field4 = 1;</div><div class="line">    string field5 = 2;</div><div class="line">    string field6 = 3;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>protobuf.js提供了6种方式使用Protobuf，这里使用json的方式，将proto文件编译为一个json文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pbjs -t json msg.proto &gt; bundle.json</div></pre></td></tr></table></figure></p>
+<h3 id="编码实现"><a href="#编码实现" class="headerlink" title="编码实现"></a>编码实现</h3><p>代码写比较简单，没有实现太多逻辑，特别是socket的管理、断包和粘包的情况并没有处理。<br>引入protobuf.js库<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install protobufjs --save</div></pre></td></tr></table></figure></p>
+<p>加载protobuf的数据定义<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var protobuf = require(&quot;protobufjs&quot;);</div><div class="line">var jsonDescriptor = require(&quot;./bundle.json&quot;); // exemplary for node</div><div class="line">var root = protobuf.Root.fromJSON(jsonDescriptor);</div><div class="line">var Msg1 = root.lookupType(&quot;msg.Msg1&quot;);</div><div class="line">var Msg2 = root.lookupType(&quot;msg.Msg2&quot;);</div></pre></td></tr></table></figure></p>
+<p>创建一个socket server的监听<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">var net = require(&apos;net&apos;);</div><div class="line">var HOST = &apos;127.0.0.1&apos;;</div><div class="line">var PORT = 6969;</div><div class="line">net.createServer(function(sock) &#123;</div><div class="line">  // 我们获得一个连接 - 该连接自动关联一个socket对象</div><div class="line">  // 为这个socket实例添加一个&quot;data&quot;事件处理函数</div><div class="line">  sock.on(&apos;data&apos;, function(data) &#123;</div><div class="line">    // 进行数据解析，看下面代码</div><div class="line">    &#125;);</div><div class="line">  // 为这个socket实例添加一个&quot;close&quot;事件处理函数</div><div class="line">  sock.on(&apos;close&apos;, function(data) &#123;</div><div class="line">    // todo</div><div class="line">    &#125;);</div><div class="line">&#125;).listen(PORT, HOST);</div></pre></td></tr></table></figure></p>
+<p>数据解析一、判断类型和去掉分隔符<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">var type = data[0];</div><div class="line">var buffer = data.slice(1, data.length - 3); //丢弃头尾</div><div class="line">console.log(&quot;type : &quot; + type + &apos;   buffer : &apos;);</div><div class="line">console.log(buffer);</div><div class="line">if (type == 0x01) &#123;</div><div class="line">  // 用Msg1格式来解析数据</div><div class="line">&#125; else if (type == 0x02) &#123;</div><div class="line">  // 用Msg2格式来解析数据</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>数据解析二、用protobuf解析数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">var message = Msg1.decode(buffer);</div><div class="line">console.log(&apos;message : &apos;);</div><div class="line">console.log(message);</div><div class="line">var object = Msg1.toObject(message, &#123;</div><div class="line">  field1: String,</div><div class="line">  field2: Number,</div><div class="line">  field3: String,</div><div class="line">// see ConversionOptions</div><div class="line">  &#125;);</div></pre></td></tr></table></figure></p>
+<p>发送数据，编码为protobuf的二进制数据，同时拼接类型头和分隔符<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">// 回发数据</div><div class="line">var payload1 = &#123;</div><div class="line">  field1: &quot;test msg1_field1&quot;,</div><div class="line">  field2: 123321,</div><div class="line">  field3: &quot;test msg1_field3&quot;</div><div class="line">&#125;;</div><div class="line">var errMsg1 = Msg1.verify(payload1);</div><div class="line">if (errMsg1)</div><div class="line">  throw Error(errMsg1);</div><div class="line">var message1 = Msg1.create(payload1);</div><div class="line">var buffer1 = Msg1.encode(message1).finish();</div><div class="line">//拼接head，表示类型，01:Msg1  02:Msg2</div><div class="line">var contentBuf1 = Buffer.concat([Buffer.from([0x01]), buffer1]);</div><div class="line">//拼接结束标志</div><div class="line">contentBuf1 = Buffer.concat([contentBuf1, Buffer.from([0x0D, 0x0A])]);</div><div class="line">sock.write(contentBuf1);</div></pre></td></tr></table></figure></p>
+<h2 id="ObjectC客户端的实现"><a href="#ObjectC客户端的实现" class="headerlink" title="ObjectC客户端的实现"></a>ObjectC客户端的实现</h2><p>这是<a href="https://github.com/bobo892589/SocketClientDemo" target="_blank" rel="external">github的demo源码</a></p>
+<h3 id="安装Protobuf"><a href="#安装Protobuf" class="headerlink" title="安装Protobuf"></a>安装Protobuf</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">brew install protobuf</div></pre></td></tr></table></figure>
+<p>可以使用<code>protoc</code>命令来编译proto文件</p>
+<h3 id="Google-protobuf-objectivec库"><a href="#Google-protobuf-objectivec库" class="headerlink" title="Google protobuf/objectivec库"></a>Google protobuf/objectivec库</h3><p>这是官方的protobuf在ObejctC支持库，引用也非常简单，支持cocoapods:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pod &apos;Protobuf&apos;, &apos;~&gt; 3.1.0&apos;</div></pre></td></tr></table></figure></p>
+<h3 id="proto文件-1"><a href="#proto文件-1" class="headerlink" title="proto文件"></a>proto文件</h3><p>直接使用上文的proto文件即可，编译proto文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">protoc --objc_out=./ ./msg.proto</div></pre></td></tr></table></figure></p>
+<p>会生成<code>.h</code>和<code>.m</code>文件，添加到项目项目中，注意ARC项目的<code>.m</code>文件要加<code>-fno-objc-arc</code>编译标记。</p>
+<h3 id="CocoaAsyncSocket库"><a href="#CocoaAsyncSocket库" class="headerlink" title="CocoaAsyncSocket库"></a>CocoaAsyncSocket库</h3><p>iOS开发中很强大一个socket库，实现了各种类型的socket，还有各种情况的处理，特别是断包粘包的处理，如果想了解更多这个库，建议可以认真看看一个大神写的这5篇博客：<a href="http://www.jianshu.com/p/0a11b2d0f4ae" target="_blank" rel="external">一</a> <a href="http://www.jianshu.com/p/22c984eac9b9" target="_blank" rel="external">二</a> <a href="http://www.jianshu.com/p/2e16572c9ddc" target="_blank" rel="external">三</a> <a href="http://www.jianshu.com/p/fdd3d429bdb3" target="_blank" rel="external">四</a> <a href="http://www.jianshu.com/p/19f0fd363f60" target="_blank" rel="external">五</a><br>cocoapods 引入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pod &apos;CocoaAsyncSocket&apos;, &apos;~&gt; 7.5.1&apos;</div></pre></td></tr></table></figure></p>
+<h3 id="源码实现"><a href="#源码实现" class="headerlink" title="源码实现"></a>源码实现</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line">- (IBAction)onConnect:(id)sender &#123;</div><div class="line">    NSLog(@&quot;onConnect !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!&quot;);</div><div class="line">    self.socket =  [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];</div><div class="line">    [self.socket connectToHost:@&quot;127.0.0.1&quot; onPort:6969 error:nil];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (IBAction)onSendBuf:(id)sender &#123;</div><div class="line">    NSMutableData *data =  [[NSData dataWithBytes:&quot;\x01&quot; length:1] mutableCopy];//head</div><div class="line">    Msg1 *msg1 = [Msg1 new];</div><div class="line">    msg1.field1 = @&quot;client-msg1Field1&quot;;</div><div class="line">    msg1.field2 = 789987;</div><div class="line">    msg1.field3 = @&quot;client-msg1Field3&quot;;</div><div class="line">    [data appendData:[msg1 data]]; //content</div><div class="line">    [data appendData:[GCDAsyncSocket CRLFData]]; //flag</div><div class="line">    [self.socket writeData:data withTimeout:-1 tag:110];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (IBAction)onSendBuf2:(id)sender &#123;</div><div class="line"></div><div class="line">    NSMutableData *data =  [[NSData dataWithBytes:&quot;\x02&quot; length:1] mutableCopy];//head</div><div class="line">    Msg2 *msg2 = [Msg2 new];</div><div class="line">    msg2.field4 = 667667;</div><div class="line">    msg2.field5 = @&quot;client-msg2Field2&quot;;</div><div class="line">    msg2.field6 = @&quot;client-msg2Field3&quot;;</div><div class="line">    [data appendData:[msg2 data]]; //content</div><div class="line">    [data appendData:[GCDAsyncSocket CRLFData]]; //flag</div><div class="line">    [self.socket writeData:data withTimeout:-1 tag:110];</div><div class="line">&#125;</div><div class="line"></div><div class="line">#pragma mark - GCDAsyncSocketDelegate</div><div class="line"></div><div class="line">//连接成功调用</div><div class="line">- (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port &#123;</div><div class="line">    NSLog(@&quot;连接成功,host:%@,port:%d&quot;,host,port);</div><div class="line">    [sock readDataToData:[GCDAsyncSocket CRLFData] withTimeout:-1 tag:110];</div><div class="line">&#125;</div><div class="line"></div><div class="line">//断开连接的时候调用</div><div class="line">- (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(nullable NSError *)err &#123;</div><div class="line">    NSLog(@&quot;断开连接,host:%@,port:%d&quot;,sock.localHost,sock.localPort);</div><div class="line">&#125;</div><div class="line"></div><div class="line">//写的回调</div><div class="line">- (void)socket:(GCDAsyncSocket*)sock didWriteDataWithTag:(long)tag &#123;</div><div class="line">    NSLog(@&quot;写的回调,tag:%ld&quot;,tag);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">- (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag &#123;</div><div class="line">    NSLog(@&quot;收到消息：%@&quot;,data);</div><div class="line">    if (data.length &gt; 3) &#123;</div><div class="line">        const char *bytes = [data bytes];</div><div class="line">        unsigned char type = bytes[0];</div><div class="line">        NSData *protobuf = [data subdataWithRange:NSMakeRange(1, data.length - 3)];</div><div class="line">        if (type == &apos;\x01&apos;) &#123;</div><div class="line">            Msg1 *msg1 = [[Msg1 alloc] initWithData:protobuf error:nil];</div><div class="line">            NSLog(@&quot;Msg1 : field1:%@ | field2:%d | field3:%@&quot;, msg1.field1, (int)msg1.field2, msg1.field3);</div><div class="line">        &#125; else if (type == &apos;\x02&apos;) &#123;</div><div class="line">            Msg2 *msg2 = [[Msg2 alloc] initWithData:protobuf error:nil];</div><div class="line">            NSLog(@&quot;Msg2 : field4:%d | field5:%@ | field6:%@&quot;, (int)msg2.field4, msg2.field5, msg2.field6);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    [sock readDataToData:[GCDAsyncSocket CRLFData] withTimeout:-1 tag:110];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>理解<code>readDataToData:withTimeout:tag:</code>方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">//读取数据，有数据就会触发代理</div><div class="line">- (void)readDataWithTimeout:(NSTimeInterval)timeout tag:(long)tag;</div><div class="line">//直到读到这个长度的数据，才会触发代理</div><div class="line">- (void)readDataToLength:(NSUInteger)length withTimeout:(NSTimeInterval)timeout tag:(long)tag;</div><div class="line">//直到读到data这个边界，才会触发代理</div><div class="line">- (void)readDataToData:(NSData *)data withTimeout:(NSTimeInterval)timeout tag:(long)tag;</div></pre></td></tr></table></figure></p>
+<p>这个框架每次读取数据，必须手动的去调用上述这些read方法，而我们之前的实现思路是，第一次连接成功的代理触发后调用，之后每次收到消息之后，都在去调用一次这个方法，超时为-1，即不超时。这样我们每次收到消息，都会即时触发我们读取消息的代理。<br>这里使用读取到指定边界这个方法<code>readDataToData:withTimeout:tag:</code>，这样CocoaAsyncSocket就帮我们完成断包粘包的问题，同时也实现使用分隔符来识别数据包的问题。分隔符要跟服务器那边统一<code>0x0D</code>和<code>0x0A</code>其实它就是一个<code>\r\n</code>。<br>protobuf的数据编码和解析也非常简单：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[msg1 data] //编码为二进制数据</div><div class="line">[[Msg2 alloc] initWithData:protobuf error:nil];  //解析数据</div></pre></td></tr></table></figure></p>
+<h2 id="总结一下"><a href="#总结一下" class="headerlink" title="总结一下"></a>总结一下</h2><p>Socket对于即时通讯，对于要求即时性高业务是必不可少，而protobuf二进制序列化，虽然相比于json之类的无法肉眼可见可随时编辑，然后它的优点也明显更简洁更快，在一些性能要求的业务会是最好的选择。这里技术探索还是比较简单的，特别是socket，udp是一个非常重要的选择，会在以后更多地去接触和学习。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ios-socket-protobuf-nodejs/" rel="tag"># ios socket protobuf nodejs</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/10/jenkins-sonar-mac/" rel="next" title="jenkins和sonar环境配置MAC版">
+                <i class="fa fa-chevron-left"></i> jenkins和sonar环境配置MAC版
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yOTcxMS82Mjc5"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Benson Deng" />
+          <p class="site-author-name" itemprop="name">Benson Deng</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Protobuf"><span class="nav-number">1.</span> <span class="nav-text">Protobuf</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP-Socket"><span class="nav-number">2.</span> <span class="nav-text">TCP Socket</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NodeJS服务器端实现"><span class="nav-number">3.</span> <span class="nav-text">NodeJS服务器端实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NodeJS中Protobuf的第三方模块"><span class="nav-number">3.1.</span> <span class="nav-text">NodeJS中Protobuf的第三方模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#proto文件"><span class="nav-number">3.2.</span> <span class="nav-text">proto文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编码实现"><span class="nav-number">3.3.</span> <span class="nav-text">编码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ObjectC客户端的实现"><span class="nav-number">4.</span> <span class="nav-text">ObjectC客户端的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装Protobuf"><span class="nav-number">4.1.</span> <span class="nav-text">安装Protobuf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Google-protobuf-objectivec库"><span class="nav-number">4.2.</span> <span class="nav-text">Google protobuf/objectivec库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#proto文件-1"><span class="nav-number">4.3.</span> <span class="nav-text">proto文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CocoaAsyncSocket库"><span class="nav-number">4.4.</span> <span class="nav-text">CocoaAsyncSocket库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#源码实现"><span class="nav-number">4.5.</span> <span class="nav-text">源码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结一下"><span class="nav-number">5.</span> <span class="nav-text">总结一下</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Benson Deng</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("iXL59JzUT4mXtupOhm7tlP0U-gzGzoHsz", "XkH6UcizgEVHyvOYGEHHjSP8");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
